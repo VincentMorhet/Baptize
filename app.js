@@ -112,49 +112,50 @@ const SONS_DATA = {
     // Les choix erronés ne contiennent JAMAIS le phonème demandé, même écrit différemment
     "sons-simples": {
         exercises: [
-            // Voyelles — on utilise des mots-exemples courts pour forcer la bonne prononciation
-            { prompt: "🔊 [a]", speak: "chat, le son a", instruction: "Quel mot contient le son « a » ?", choices: ["chat", "loup", "jeu", "feu"], answer: 0 },
-            { prompt: "🔊 [i]", speak: "pie, le son i", instruction: "Quel mot contient le son « i » ?", choices: ["bout", "four", "tapis", "moule"], answer: 2 },
-            { prompt: "🔊 [u]", speak: "lune, le son u", instruction: "Quel mot contient le son « u » (comme dans lune) ?", choices: ["mur", "mot", "bras", "vent"], answer: 0 },
-            { prompt: "🔊 [o]", speak: "mot, le son o", instruction: "Quel mot contient le son « o » ?", choices: ["lit", "sac", "mur", "vélo"], answer: 3 },
-            { prompt: "🔊 [é]", speak: "bébé, le son é", instruction: "Quel mot contient le son « é » ?", choices: ["bébé", "chat", "loup", "dur"], answer: 0 },
-            { prompt: "🔊 [è]", speak: "lait, le son è", instruction: "Quel mot contient le son « è » ?", choices: ["mur", "forêt", "doux", "goût"], answer: 1 },
+            // Voyelles — speakMode: "tts" force la synthèse vocale pour les phonèmes isolés
+            { prompt: "🔊 [a]", speak: "aaa", speakMode: "tts", instruction: "Quel mot contient le son « a » ?", choices: ["chat", "loup", "jeu", "feu"], answer: 0 },
+            { prompt: "🔊 [i]", speak: "iii", speakMode: "tts", instruction: "Quel mot contient le son « i » ?", choices: ["bout", "four", "tapis", "moule"], answer: 2 },
+            { prompt: "🔊 [u]", speak: "uuu", speakMode: "tts", instruction: "Quel mot contient le son « u » (comme dans lune) ?", choices: ["mur", "mot", "bras", "vent"], answer: 0 },
+            { prompt: "🔊 [o]", speak: "ooo", speakMode: "tts", instruction: "Quel mot contient le son « o » ?", choices: ["lit", "sac", "mur", "vélo"], answer: 3 },
+            { prompt: "🔊 [é]", speak: "éééé", speakMode: "tts", instruction: "Quel mot contient le son « é » ?", choices: ["bébé", "chat", "loup", "dur"], answer: 0 },
+            { prompt: "🔊 [è]", speak: "èèè", speakMode: "tts", instruction: "Quel mot contient le son « è » ?", choices: ["mur", "forêt", "doux", "goût"], answer: 1 },
             // Consonnes
-            { prompt: "🔊 [f]", speak: "feu, le son f", instruction: "Quel mot contient le son « f » ?", choices: ["girafe", "chat", "loup", "banane"], answer: 0 },
-            { prompt: "🔊 [s]", speak: "sac, le son s", instruction: "Quel mot contient le son « s » ?", choices: ["cerise", "table", "four", "arbre"], answer: 0 },
-            { prompt: "🔊 [k]", speak: "coq, le son k", instruction: "Quel mot contient le son « k » ?", choices: ["journal", "sable", "école", "lune"], answer: 2 },
-            { prompt: "🔊 [j]", speak: "jeu, le son j", instruction: "Quel mot contient le son « j » (comme dans jeu) ?", choices: ["gilet", "balle", "pomme", "robe"], answer: 0 },
+            { prompt: "🔊 [f]", speak: "fffeu", speakMode: "tts", instruction: "Quel mot contient le son « f » ?", choices: ["girafe", "chat", "loup", "banane"], answer: 0 },
+            { prompt: "🔊 [s]", speak: "sss", speakMode: "tts", instruction: "Quel mot contient le son « s » ?", choices: ["cerise", "table", "four", "arbre"], answer: 0 },
+            { prompt: "🔊 [k]", speak: "ka", speakMode: "tts", instruction: "Quel mot contient le son « k » ?", choices: ["journal", "sable", "école", "lune"], answer: 2 },
+            { prompt: "🔊 [j]", speak: "jjje", speakMode: "tts", instruction: "Quel mot contient le son « j » (comme dans jeu) ?", choices: ["gilet", "balle", "pomme", "robe"], answer: 0 },
             // Sons nasaux
-            { prompt: "🔊 [on]", speak: "bon, le son on", instruction: "Quel mot contient le son « on » ?", choices: ["maison", "lapin", "salade", "vélo"], answer: 0 },
-            { prompt: "🔊 [an]", speak: "vent, le son an", instruction: "Quel mot contient le son « an » ?", choices: ["maman", "souris", "tapis", "loup"], answer: 0 },
-            { prompt: "🔊 [in]", speak: "pain, le son in", instruction: "Quel mot contient le son « in » ?", choices: ["pomme", "lapin", "mouton", "gâteau"], answer: 1 },
+            { prompt: "🔊 [on]", speak: "on on on", speakMode: "tts", instruction: "Quel mot contient le son « on » ?", choices: ["maison", "lapin", "salade", "vélo"], answer: 0 },
+            { prompt: "🔊 [an]", speak: "an an an", speakMode: "tts", instruction: "Quel mot contient le son « an » ?", choices: ["maman", "souris", "tapis", "loup"], answer: 0 },
+            { prompt: "🔊 [in]", speak: "in in in", speakMode: "tts", instruction: "Quel mot contient le son « in » ?", choices: ["pomme", "lapin", "mouton", "gâteau"], answer: 1 },
             // Sons composés
-            { prompt: "🔊 [ou]", speak: "loup, le son ou", instruction: "Quel mot contient le son « ou » ?", choices: ["mouton", "matin", "sapin", "balai"], answer: 0 },
-            { prompt: "🔊 [oi]", speak: "roi, le son oi", instruction: "Quel mot contient le son « oi » ?", choices: ["jardin", "fleur", "voiture", "ballon"], answer: 2 },
-            { prompt: "🔊 [ch]", speak: "chat, le son ch", instruction: "Quel mot contient le son « ch » ?", choices: ["garçon", "cheval", "ballon", "table"], answer: 1 },
+            { prompt: "🔊 [ou]", speak: "ou ou ou", speakMode: "tts", instruction: "Quel mot contient le son « ou » ?", choices: ["mouton", "matin", "sapin", "balai"], answer: 0 },
+            { prompt: "🔊 [oi]", speak: "oi oi oi", speakMode: "tts", instruction: "Quel mot contient le son « oi » ?", choices: ["jardin", "fleur", "voiture", "ballon"], answer: 2 },
+            { prompt: "🔊 [ch]", speak: "ch ch ch", speakMode: "tts", instruction: "Quel mot contient le son « ch » ?", choices: ["garçon", "cheval", "ballon", "table"], answer: 1 },
         ]
     },
 
     // Niveau 2 : Reconnaître comment un son S'ÉCRIT (graphème)
+    // speakMode: "wiki" (par défaut) → joue le mot depuis Wikimedia Commons
     "graphemes": {
         exercises: [
-            { prompt: "eau", speak: "gâteau, on entend o, écrit eau", instruction: "Quel mot s'écrit avec « eau » ?", choices: ["gâteau", "vélo", "auto", "moto"], answer: 0 },
-            { prompt: "au", speak: "château, on entend o, écrit au", instruction: "Quel mot s'écrit avec « au » ?", choices: ["château", "bateau", "beau", "vélo"], answer: 0 },
-            { prompt: "ph", speak: "photo, on entend f, écrit ph", instruction: "Quel mot s'écrit avec « ph » ?", choices: ["photo", "girafe", "café", "soif"], answer: 0 },
-            { prompt: "f", speak: "forêt, on entend f, écrit avec la lettre f", instruction: "Quel mot s'écrit avec « f » (pas « ph ») ?", choices: ["éléphant", "phare", "forêt", "pharmacie"], answer: 2 },
-            { prompt: "ss", speak: "poisson, on entend s, écrit ss", instruction: "Quel mot s'écrit avec « ss » ?", choices: ["poisson", "garçon", "cerise", "sable"], answer: 0 },
-            { prompt: "ç", speak: "garçon, on entend s, écrit cé cédille", instruction: "Quel mot s'écrit avec « ç » ?", choices: ["garçon", "singe", "salade", "poisson"], answer: 0 },
-            { prompt: "c", speak: "cerise, on entend s, écrit avec la lettre c", instruction: "Quel mot a le son « s » écrit avec un « c » ?", choices: ["cerise", "sable", "tasse", "garçon"], answer: 0 },
-            { prompt: "qu", speak: "quatre, on entend k, écrit qu", instruction: "Quel mot s'écrit avec « qu » ?", choices: ["quatre", "carotte", "koala", "classe"], answer: 0 },
-            { prompt: "k", speak: "koala, on entend k, écrit avec la lettre k", instruction: "Quel mot s'écrit avec « k » ?", choices: ["koala", "quatre", "coq", "carte"], answer: 0 },
-            { prompt: "en", speak: "enfant, on entend an, écrit en", instruction: "Quel mot s'écrit avec « en » ?", choices: ["enfant", "maman", "chambre", "lampe"], answer: 0 },
-            { prompt: "an", speak: "maman, on entend an, écrit an", instruction: "Quel mot s'écrit avec « an » ?", choices: ["maman", "enfant", "vent", "temps"], answer: 0 },
-            { prompt: "am", speak: "chambre, on entend an, écrit am", instruction: "Quel mot s'écrit avec « am » ?", choices: ["chambre", "maman", "enfant", "vent"], answer: 0 },
-            { prompt: "ain", speak: "pain, on entend in, écrit ain", instruction: "Quel mot s'écrit avec « ain » ?", choices: ["pain", "lapin", "timbre", "plein"], answer: 0 },
-            { prompt: "ein", speak: "peinture, on entend in, écrit ein", instruction: "Quel mot s'écrit avec « ein » ?", choices: ["peinture", "sapin", "main", "simple"], answer: 0 },
-            { prompt: "g", speak: "girafe, on entend j, écrit avec la lettre g", instruction: "Quel mot a le son « j » écrit avec un « g » ?", choices: ["girafe", "jardin", "jouet", "jupe"], answer: 0 },
-            { prompt: "ai", speak: "maison, on entend è, écrit ai", instruction: "Quel mot s'écrit avec « ai » ?", choices: ["maison", "forêt", "fête", "mère"], answer: 0 },
-            { prompt: "ê", speak: "forêt, on entend è, écrit e accent circonflexe", instruction: "Quel mot s'écrit avec « ê » ?", choices: ["forêt", "maison", "balai", "neige"], answer: 0 },
+            { prompt: "eau", speak: "gâteau", instruction: "Quel mot s'écrit avec « eau » ?", choices: ["gâteau", "vélo", "auto", "moto"], answer: 0 },
+            { prompt: "au", speak: "château", instruction: "Quel mot s'écrit avec « au » ?", choices: ["château", "bateau", "beau", "vélo"], answer: 0 },
+            { prompt: "ph", speak: "photo", instruction: "Quel mot s'écrit avec « ph » ?", choices: ["photo", "girafe", "café", "soif"], answer: 0 },
+            { prompt: "f", speak: "forêt", instruction: "Quel mot s'écrit avec « f » (pas « ph ») ?", choices: ["éléphant", "phare", "forêt", "pharmacie"], answer: 2 },
+            { prompt: "ss", speak: "poisson", instruction: "Quel mot s'écrit avec « ss » ?", choices: ["poisson", "garçon", "cerise", "sable"], answer: 0 },
+            { prompt: "ç", speak: "garçon", instruction: "Quel mot s'écrit avec « ç » ?", choices: ["garçon", "singe", "salade", "poisson"], answer: 0 },
+            { prompt: "c", speak: "cerise", instruction: "Quel mot a le son « s » écrit avec un « c » ?", choices: ["cerise", "sable", "tasse", "garçon"], answer: 0 },
+            { prompt: "qu", speak: "quatre", instruction: "Quel mot s'écrit avec « qu » ?", choices: ["quatre", "carotte", "koala", "classe"], answer: 0 },
+            { prompt: "k", speak: "koala", instruction: "Quel mot s'écrit avec « k » ?", choices: ["koala", "quatre", "coq", "carte"], answer: 0 },
+            { prompt: "en", speak: "enfant", instruction: "Quel mot s'écrit avec « en » ?", choices: ["enfant", "maman", "chambre", "lampe"], answer: 0 },
+            { prompt: "an", speak: "maman", instruction: "Quel mot s'écrit avec « an » ?", choices: ["maman", "enfant", "vent", "temps"], answer: 0 },
+            { prompt: "am", speak: "chambre", instruction: "Quel mot s'écrit avec « am » ?", choices: ["chambre", "maman", "enfant", "vent"], answer: 0 },
+            { prompt: "ain", speak: "pain", instruction: "Quel mot s'écrit avec « ain » ?", choices: ["pain", "lapin", "timbre", "plein"], answer: 0 },
+            { prompt: "ein", speak: "peinture", instruction: "Quel mot s'écrit avec « ein » ?", choices: ["peinture", "sapin", "main", "simple"], answer: 0 },
+            { prompt: "g", speak: "girafe", instruction: "Quel mot a le son « j » écrit avec un « g » ?", choices: ["girafe", "jardin", "jouet", "jupe"], answer: 0 },
+            { prompt: "ai", speak: "maison", instruction: "Quel mot s'écrit avec « ai » ?", choices: ["maison", "forêt", "fête", "mère"], answer: 0 },
+            { prompt: "ê", speak: "forêt", instruction: "Quel mot s'écrit avec « ê » ?", choices: ["forêt", "maison", "balai", "neige"], answer: 0 },
         ]
     },
 
@@ -569,10 +570,11 @@ function showSonsExercise() {
 
     // Afficher le prompt avec le bouton haut-parleur si un son est disponible
     const promptDiv = document.getElementById('sons-prompt');
+    const speakMode = ex.speakMode || 'wiki';
     if (ex.speak) {
-        promptDiv.innerHTML = ex.prompt + ' <button class="speak-btn" onclick="speakFrench(\'' + ex.speak.replace(/'/g, "\\'") + '\')">🔊</button>';
+        promptDiv.innerHTML = ex.prompt + ' <button class="speak-btn" onclick="speakFrench(\'' + ex.speak.replace(/'/g, "\\'") + '\', \'' + speakMode + '\')">🔊</button>';
         // Jouer le son automatiquement
-        setTimeout(() => speakFrench(ex.speak), 300);
+        setTimeout(() => speakFrench(ex.speak, speakMode), 300);
     } else {
         promptDiv.textContent = ex.prompt;
     }
@@ -803,7 +805,7 @@ function hideNextButton(containerId) {
 const audioCache = {};
 let currentAudio = null;
 
-function speakFrench(text) {
+function speakFrench(text, mode) {
     // Arrêter l'audio en cours
     if (currentAudio) {
         currentAudio.pause();
@@ -811,12 +813,15 @@ function speakFrench(text) {
         currentAudio = null;
     }
 
-    // Le texte "speak" peut contenir un mot simple ou "mot, explication"
-    // On prend uniquement le premier mot pour chercher l'audio
-    const word = text.split(',')[0].trim().toLowerCase();
-    // Wikimedia utilise la première lettre en minuscule dans le nom de fichier
+    // Mode "tts" : utiliser la synthèse vocale pour les phonèmes
+    if (mode === 'tts') {
+        speakTTS(text);
+        return;
+    }
+
+    // Mode par défaut ("wiki") : chercher sur Wikimedia Commons
+    const word = text.trim().toLowerCase();
     const filename = 'File:Fr-' + word + '.ogg';
-    // Variante avec majuscule
     const filenameAlt = 'File:Fr-' + word.charAt(0).toUpperCase() + word.slice(1) + '.ogg';
 
     // Vérifier le cache
@@ -825,7 +830,6 @@ function speakFrench(text) {
         return;
     }
 
-    // Chercher les deux variantes (minuscule et majuscule) sur Wikimedia Commons
     const apiUrl = 'https://commons.wikimedia.org/w/api.php?action=query&titles='
         + encodeURIComponent(filename) + '|' + encodeURIComponent(filenameAlt)
         + '&prop=imageinfo&iiprop=url&format=json&origin=*';
@@ -834,18 +838,17 @@ function speakFrench(text) {
         .then(r => r.json())
         .then(data => {
             const pages = data.query.pages;
-            // Chercher la première page qui a un fichier audio
             const found = Object.values(pages).find(p => p.imageinfo && p.imageinfo[0]);
             if (found) {
                 const url = found.imageinfo[0].url;
                 audioCache[word] = url;
                 playAudioUrl(url);
             } else {
-                speakFallback(text);
+                speakTTS(text);
             }
         })
         .catch(() => {
-            speakFallback(text);
+            speakTTS(text);
         });
 }
 
@@ -854,12 +857,13 @@ function playAudioUrl(url) {
     currentAudio.play().catch(() => {});
 }
 
-function speakFallback(text) {
+function speakTTS(text) {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'fr-FR';
-    utterance.rate = 0.75;
+    utterance.rate = 0.6;
+    utterance.pitch = 1.0;
     const voices = window.speechSynthesis.getVoices();
     const frVoice = voices.find(v => v.lang === 'fr-FR') || voices.find(v => v.lang.startsWith('fr'));
     if (frVoice) utterance.voice = frVoice;
