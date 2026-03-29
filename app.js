@@ -220,6 +220,13 @@ function showSection(section) {
 
     state.currentSection = section;
 
+    // Mode compact quand un exercice est en cours
+    if (section === 'recompenses') {
+        document.body.classList.remove('in-game');
+    } else {
+        document.body.classList.add('in-game');
+    }
+
     // Lancer le jeu correspondant
     if (section === 'lecture') startLecture();
     else if (section === 'maths') startMaths();
