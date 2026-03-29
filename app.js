@@ -31,14 +31,52 @@ const LECTURE_DATA = {
     },
     phrases: {
         exercises: [
+            // Animaux
             { prompt: "Le chat dort sur le ___.", question: "Quel mot complète la phrase ?", choices: ["canapé", "ciel", "eau", "vent"], answer: 0 },
-            { prompt: "Maman prépare le ___.", question: "Quel mot complète la phrase ?", choices: ["soleil", "repas", "livre", "arbre"], answer: 1 },
-            { prompt: "Il fait ___ dehors.", question: "Quel mot complète la phrase ?", choices: ["livre", "table", "beau", "poisson"], answer: 2 },
-            { prompt: "Je vais à l'___.", question: "Quel mot complète la phrase ?", choices: ["voiture", "école", "maison", "chat"], answer: 1 },
-            { prompt: "Le ___ est bleu.", question: "Quel mot complète la phrase ?", choices: ["herbe", "terre", "ciel", "feu"], answer: 2 },
-            { prompt: "Papa lit un ___.", question: "Quel mot complète la phrase ?", choices: ["chien", "livre", "arbre", "mur"], answer: 1 },
+            { prompt: "Le ___ aboie fort.", question: "Quel mot complète la phrase ?", choices: ["chat", "poisson", "chien", "oiseau"], answer: 2 },
+            { prompt: "Le poisson nage dans l'___.", question: "Quel mot complète la phrase ?", choices: ["arbre", "eau", "herbe", "air"], answer: 1 },
+            { prompt: "La ___ donne du lait.", question: "Quel mot complète la phrase ?", choices: ["poule", "vache", "chèvre", "brebis"], answer: 1 },
+            { prompt: "Le lapin mange une ___.", question: "Quel mot complète la phrase ?", choices: ["carotte", "pomme", "pizza", "soupe"], answer: 0 },
             { prompt: "L'oiseau ___ dans le ciel.", question: "Quel mot complète la phrase ?", choices: ["mange", "dort", "vole", "nage"], answer: 2 },
+            { prompt: "Le papillon a de jolies ___.", question: "Quel mot complète la phrase ?", choices: ["pattes", "dents", "ailes", "cornes"], answer: 2 },
+            { prompt: "La poule pond un ___.", question: "Quel mot complète la phrase ?", choices: ["lait", "oeuf", "pain", "fruit"], answer: 1 },
+            // Famille et maison
+            { prompt: "Maman prépare le ___.", question: "Quel mot complète la phrase ?", choices: ["soleil", "repas", "livre", "arbre"], answer: 1 },
+            { prompt: "Papa lit un ___.", question: "Quel mot complète la phrase ?", choices: ["chien", "livre", "arbre", "mur"], answer: 1 },
+            { prompt: "Ma soeur joue dans le ___.", question: "Quel mot complète la phrase ?", choices: ["jardin", "nuage", "vent", "soleil"], answer: 0 },
+            { prompt: "Je dors dans mon ___.", question: "Quel mot complète la phrase ?", choices: ["école", "lit", "vélo", "sac"], answer: 1 },
+            { prompt: "On regarde la ___ le soir.", question: "Quel mot complète la phrase ?", choices: ["porte", "fenêtre", "télévision", "chaise"], answer: 2 },
+            { prompt: "Je me brosse les ___.", question: "Quel mot complète la phrase ?", choices: ["pieds", "yeux", "dents", "bras"], answer: 2 },
+            { prompt: "Je mets mes ___ pour sortir.", question: "Quel mot complète la phrase ?", choices: ["lunettes", "chaussures", "gants", "cahiers"], answer: 1 },
+            { prompt: "Mamie fait un gros ___.", question: "Quel mot complète la phrase ?", choices: ["câlin", "bruit", "dessin", "saut"], answer: 0 },
+            // École
+            { prompt: "Je vais à l'___.", question: "Quel mot complète la phrase ?", choices: ["voiture", "école", "maison", "chat"], answer: 1 },
+            { prompt: "J'écris avec un ___.", question: "Quel mot complète la phrase ?", choices: ["ballon", "crayon", "couteau", "peigne"], answer: 1 },
+            { prompt: "La maîtresse lit une ___.", question: "Quel mot complète la phrase ?", choices: ["chanson", "histoire", "table", "fenêtre"], answer: 1 },
+            { prompt: "Je dessine avec des ___.", question: "Quel mot complète la phrase ?", choices: ["ciseaux", "feutres", "livres", "règles"], answer: 1 },
+            { prompt: "Je range mes affaires dans mon ___.", question: "Quel mot complète la phrase ?", choices: ["sac", "lit", "bain", "plat"], answer: 0 },
+            { prompt: "À la récré, on joue au ___.", question: "Quel mot complète la phrase ?", choices: ["ballon", "piano", "puzzle", "livre"], answer: 0 },
+            // Nature et météo
+            { prompt: "Il fait ___ dehors.", question: "Quel mot complète la phrase ?", choices: ["livre", "table", "beau", "poisson"], answer: 2 },
+            { prompt: "Le ___ est bleu.", question: "Quel mot complète la phrase ?", choices: ["herbe", "terre", "ciel", "feu"], answer: 2 },
+            { prompt: "La ___ brille la nuit.", question: "Quel mot complète la phrase ?", choices: ["lune", "pluie", "fleur", "route"], answer: 0 },
+            { prompt: "Il ___ des flocons blancs.", question: "Quel mot complète la phrase ?", choices: ["pleut", "neige", "vente", "grêle"], answer: 1 },
+            { prompt: "Les fleurs poussent au ___.", question: "Quel mot complète la phrase ?", choices: ["hiver", "automne", "printemps", "soir"], answer: 2 },
+            { prompt: "L'arbre a perdu ses ___.", question: "Quel mot complète la phrase ?", choices: ["racines", "branches", "feuilles", "fleurs"], answer: 2 },
+            { prompt: "Le soleil se ___ le matin.", question: "Quel mot complète la phrase ?", choices: ["couche", "cache", "lève", "dort"], answer: 2 },
+            { prompt: "La pluie tombe sur le ___.", question: "Quel mot complète la phrase ?", choices: ["toit", "ciel", "soleil", "vent"], answer: 0 },
+            // Nourriture
             { prompt: "Je mange une ___.", question: "Quel mot complète la phrase ?", choices: ["chaise", "pomme", "table", "route"], answer: 1 },
+            { prompt: "Je bois un verre de ___.", question: "Quel mot complète la phrase ?", choices: ["pain", "eau", "fromage", "salade"], answer: 1 },
+            { prompt: "Le matin, je mange du ___.", question: "Quel mot complète la phrase ?", choices: ["dîner", "goûter", "pain", "soir"], answer: 2 },
+            { prompt: "Le gâteau est très ___.", question: "Quel mot complète la phrase ?", choices: ["salé", "bon", "froid", "dur"], answer: 1 },
+            { prompt: "On coupe le pain avec un ___.", question: "Quel mot complète la phrase ?", choices: ["stylo", "couteau", "balai", "livre"], answer: 1 },
+            // Actions du quotidien
+            { prompt: "Le soir, je prends mon ___.", question: "Quel mot complète la phrase ?", choices: ["bain", "vélo", "sac", "ballon"], answer: 0 },
+            { prompt: "Je ___ mes mains avant de manger.", question: "Quel mot complète la phrase ?", choices: ["coupe", "lave", "cache", "montre"], answer: 1 },
+            { prompt: "Il faut ___ avant de traverser.", question: "Quel mot complète la phrase ?", choices: ["courir", "chanter", "regarder", "sauter"], answer: 2 },
+            { prompt: "Je ___ un bisou à maman.", question: "Quel mot complète la phrase ?", choices: ["fais", "mange", "lis", "jette"], answer: 0 },
+            { prompt: "On ___ les bougies sur le gâteau.", question: "Quel mot complète la phrase ?", choices: ["mange", "souffle", "coupe", "jette"], answer: 1 },
         ]
     }
 };
@@ -217,6 +255,9 @@ function answerLecture(chosen, correct, btn) {
     const feedback = document.getElementById('lecture-feedback');
     const allBtns = document.querySelectorAll('#lecture-choices .choice-btn');
 
+    // Désactiver tous les boutons
+    allBtns.forEach(b => b.disabled = true);
+
     if (chosen === correct) {
         btn.classList.add('correct');
         feedback.textContent = randomItem(ENCOURAGEMENTS);
@@ -238,7 +279,10 @@ function answerLecture(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('lecture');
 
-    setTimeout(() => showLectureExercise(), 1200);
+    setTimeout(() => {
+        document.getElementById('lecture-choices').innerHTML = '';
+        showLectureExercise();
+    }, 1200);
 }
 
 // === MATHS ===
@@ -329,6 +373,8 @@ function answerMaths(chosen, correct, btn) {
     const feedback = document.getElementById('maths-feedback');
     const allBtns = document.querySelectorAll('#maths-choices .choice-btn');
 
+    allBtns.forEach(b => b.disabled = true);
+
     if (chosen === correct) {
         btn.classList.add('correct');
         feedback.textContent = randomItem(ENCOURAGEMENTS);
@@ -350,7 +396,10 @@ function answerMaths(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('maths');
 
-    setTimeout(() => showMathsExercise(), 1200);
+    setTimeout(() => {
+        document.getElementById('maths-choices').innerHTML = '';
+        showMathsExercise();
+    }, 1200);
 }
 
 // === SONS ===
@@ -403,6 +452,8 @@ function answerSons(chosen, correct, btn) {
     const feedback = document.getElementById('sons-feedback');
     const allBtns = document.querySelectorAll('#sons-choices .choice-btn');
 
+    allBtns.forEach(b => b.disabled = true);
+
     if (chosen === correct) {
         btn.classList.add('correct');
         feedback.textContent = randomItem(ENCOURAGEMENTS);
@@ -424,7 +475,10 @@ function answerSons(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('sons');
 
-    setTimeout(() => showSonsExercise(), 1200);
+    setTimeout(() => {
+        document.getElementById('sons-choices').innerHTML = '';
+        showSonsExercise();
+    }, 1200);
 }
 
 // === FIN DE SÉRIE ===
