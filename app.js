@@ -180,6 +180,7 @@ let state = {
     currentIndex: 0,
     correctCount: 0,
     isAnswering: false,
+    pendingTimeout: null,
 };
 
 // === SAUVEGARDE ===
@@ -236,6 +237,15 @@ function setLectureDifficulty(diff) {
 }
 
 function startLecture() {
+    if (state.pendingTimeout) {
+        clearTimeout(state.pendingTimeout);
+        state.pendingTimeout = null;
+    }
+    state.isAnswering = false;
+    document.getElementById('lecture-choices').innerHTML = '';
+    document.getElementById('lecture-feedback').textContent = '';
+    document.getElementById('lecture-feedback').className = 'feedback';
+
     const data = LECTURE_DATA[state.lectureDifficulty];
     state.currentExercises = shuffle([...data.exercises]).slice(0, 5);
     state.currentIndex = 0;
@@ -299,7 +309,8 @@ function answerLecture(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('lecture');
 
-    setTimeout(() => {
+    state.pendingTimeout = setTimeout(() => {
+        state.pendingTimeout = null;
         document.getElementById('lecture-choices').innerHTML = '';
         showLectureExercise();
     }, 1200);
@@ -315,6 +326,11 @@ function setMathsDifficulty(diff) {
 }
 
 function startMaths() {
+    if (state.pendingTimeout) {
+        clearTimeout(state.pendingTimeout);
+        state.pendingTimeout = null;
+    }
+
     state.currentExercises = [];
     const config = MATHS_DATA[state.mathsDifficulty];
 
@@ -324,6 +340,13 @@ function startMaths() {
 
     state.currentIndex = 0;
     state.correctCount = 0;
+    state.isAnswering = false;
+    document.getElementById('maths-choices').innerHTML = '';
+    document.getElementById('maths-prompt').innerHTML = '';
+    document.getElementById('maths-hands').innerHTML = '';
+    document.getElementById('maths-hands').classList.add('hidden');
+    document.getElementById('maths-feedback').textContent = '';
+    document.getElementById('maths-feedback').className = 'feedback';
     updateProgress('maths');
     showMathsExercise();
 }
@@ -441,7 +464,8 @@ function answerMaths(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('maths');
 
-    setTimeout(() => {
+    state.pendingTimeout = setTimeout(() => {
+        state.pendingTimeout = null;
         document.getElementById('maths-choices').innerHTML = '';
         document.getElementById('maths-prompt').innerHTML = '';
         document.getElementById('maths-hands').innerHTML = '';
@@ -462,6 +486,15 @@ function setSonsDifficulty(diff) {
 }
 
 function startSons() {
+    if (state.pendingTimeout) {
+        clearTimeout(state.pendingTimeout);
+        state.pendingTimeout = null;
+    }
+    state.isAnswering = false;
+    document.getElementById('sons-choices').innerHTML = '';
+    document.getElementById('sons-feedback').textContent = '';
+    document.getElementById('sons-feedback').className = 'feedback';
+
     const data = SONS_DATA[state.sonsDifficulty];
     state.currentExercises = shuffle([...data.exercises]).slice(0, 5);
     state.currentIndex = 0;
@@ -525,7 +558,8 @@ function answerSons(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('sons');
 
-    setTimeout(() => {
+    state.pendingTimeout = setTimeout(() => {
+        state.pendingTimeout = null;
         document.getElementById('sons-choices').innerHTML = '';
         showSonsExercise();
     }, 1200);
