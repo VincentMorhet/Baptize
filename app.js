@@ -286,7 +286,7 @@ function answerLecture(chosen, correct, btn) {
     const allBtns = document.querySelectorAll('#lecture-choices .choice-btn');
 
     // Désactiver tous les boutons
-    allBtns.forEach(b => b.disabled = true);
+    allBtns.forEach(b => { b.disabled = true; b.blur(); });
 
     if (chosen === correct) {
         btn.classList.add('correct');
@@ -441,7 +441,7 @@ function answerMaths(chosen, correct, btn) {
     const feedback = document.getElementById('maths-feedback');
     const allBtns = document.querySelectorAll('#maths-choices .choice-btn');
 
-    allBtns.forEach(b => b.disabled = true);
+    allBtns.forEach(b => { b.disabled = true; b.blur(); });
 
     if (chosen === correct) {
         btn.classList.add('correct');
@@ -535,7 +535,7 @@ function answerSons(chosen, correct, btn) {
     const feedback = document.getElementById('sons-feedback');
     const allBtns = document.querySelectorAll('#sons-choices .choice-btn');
 
-    allBtns.forEach(b => b.disabled = true);
+    allBtns.forEach(b => { b.disabled = true; b.blur(); });
 
     if (chosen === correct) {
         btn.classList.add('correct');
