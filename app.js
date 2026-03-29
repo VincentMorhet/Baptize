@@ -797,24 +797,76 @@ function hideNextButton(containerId) {
     container.innerHTML = '';
 }
 
-// === SYNTHÈSE VOCALE ===
+// === AUDIO VIA WIKIMEDIA COMMONS ===
+
+// Cache des URLs audio résolues
+const audioCache = {};
+let currentAudio = null;
 
 function speakFrench(text) {
+    // Arrêter l'audio en cours
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+    }
+
+    // Le texte "speak" peut contenir un mot simple ou "mot, explication"
+    // On prend uniquement le premier mot pour chercher l'audio
+    const word = text.split(',')[0].trim().toLowerCase();
+    // Wikimedia utilise la première lettre en minuscule dans le nom de fichier
+    const filename = 'File:Fr-' + word + '.ogg';
+    // Variante avec majuscule
+    const filenameAlt = 'File:Fr-' + word.charAt(0).toUpperCase() + word.slice(1) + '.ogg';
+
+    // Vérifier le cache
+    if (audioCache[word]) {
+        playAudioUrl(audioCache[word]);
+        return;
+    }
+
+    // Chercher les deux variantes (minuscule et majuscule) sur Wikimedia Commons
+    const apiUrl = 'https://commons.wikimedia.org/w/api.php?action=query&titles='
+        + encodeURIComponent(filename) + '|' + encodeURIComponent(filenameAlt)
+        + '&prop=imageinfo&iiprop=url&format=json&origin=*';
+
+    fetch(apiUrl)
+        .then(r => r.json())
+        .then(data => {
+            const pages = data.query.pages;
+            // Chercher la première page qui a un fichier audio
+            const found = Object.values(pages).find(p => p.imageinfo && p.imageinfo[0]);
+            if (found) {
+                const url = found.imageinfo[0].url;
+                audioCache[word] = url;
+                playAudioUrl(url);
+            } else {
+                speakFallback(text);
+            }
+        })
+        .catch(() => {
+            speakFallback(text);
+        });
+}
+
+function playAudioUrl(url) {
+    currentAudio = new Audio(url);
+    currentAudio.play().catch(() => {});
+}
+
+function speakFallback(text) {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'fr-FR';
     utterance.rate = 0.75;
-    utterance.pitch = 1.0;
-
     const voices = window.speechSynthesis.getVoices();
     const frVoice = voices.find(v => v.lang === 'fr-FR') || voices.find(v => v.lang.startsWith('fr'));
     if (frVoice) utterance.voice = frVoice;
-
     window.speechSynthesis.speak(utterance);
 }
 
-// Charger les voix dès que possible (certains navigateurs les chargent en async)
+// Précharger les voix pour le fallback
 if ('speechSynthesis' in window) {
     window.speechSynthesis.getVoices();
     window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
