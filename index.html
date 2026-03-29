@@ -3,26 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baptize - Apprends en t'amusant !</title>
+    <title>Mentalis - Apprends en t'amusant !</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div id="app">
-        <!-- ÉCRAN D'ACCUEIL -->
-        <div id="welcome-screen">
-            <div class="welcome-content">
-                <h1>🎓 Baptize</h1>
-                <p>Comment tu t'appelles ?</p>
-                <input type="text" id="name-input" placeholder="Ton prénom" maxlength="20" autocomplete="off">
-                <button id="name-submit" class="btn-continue" onclick="submitName()">C'est parti !</button>
-            </div>
-        </div>
+    <!-- Écran de connexion / inscription -->
+    <div id="auth-screen">
+        <div class="auth-container">
+            <h1>🎓 Mentalis</h1>
+            <p class="auth-subtitle">Apprends en t'amusant !</p>
 
-        <!-- APP PRINCIPALE (cachée au départ) -->
-        <div id="main-app" class="hidden">
+            <div id="auth-form">
+                <div id="auth-tabs">
+                    <button class="auth-tab active" onclick="showAuthTab('login')">Connexion</button>
+                    <button class="auth-tab" onclick="showAuthTab('register')">Inscription</button>
+                </div>
+
+                <!-- Connexion -->
+                <div id="tab-login" class="auth-tab-content">
+                    <input type="email" id="login-email" placeholder="Email du parent" autocomplete="email">
+                    <input type="password" id="login-password" placeholder="Mot de passe" autocomplete="current-password">
+                    <button class="auth-btn" onclick="loginUser()">Se connecter</button>
+                </div>
+
+                <!-- Inscription -->
+                <div id="tab-register" class="auth-tab-content hidden">
+                    <input type="text" id="register-name" placeholder="Prénom de l'enfant" autocomplete="given-name">
+                    <input type="email" id="register-email" placeholder="Email du parent" autocomplete="email">
+                    <input type="password" id="register-password" placeholder="Mot de passe (min. 6 caractères)" autocomplete="new-password">
+                    <button class="auth-btn" onclick="registerUser()">S'inscrire</button>
+                </div>
+
+                <div id="auth-error" class="auth-error hidden"></div>
+                <div id="auth-success" class="auth-success hidden"></div>
+            </div>
+
+            <button class="auth-skip" onclick="skipAuth()">Jouer sans compte →</button>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
         <header>
-            <h1>🎓 Baptize</h1>
-            <p class="subtitle">Apprends en t'amusant, <span id="player-name">Baptiste</span> !</p>
+            <h1>🎓 Mentalis</h1>
+            <p class="subtitle">Apprends en t'amusant !</p>
             <div id="stars-display">
                 <span id="stars-count">0</span> ⭐
             </div>
@@ -55,7 +79,6 @@
                 <button class="diff-btn" onclick="setLectureDifficulty('mots')">Mots</button>
                 <button class="diff-btn" onclick="setLectureDifficulty('phrases')">Phrases</button>
             </div>
-            <div id="lecture-consigne" class="consigne"></div>
             <div id="lecture-game" class="game-area">
                 <div id="lecture-prompt" class="big-text"></div>
                 <div id="lecture-choices" class="choices-grid"></div>
@@ -77,7 +100,6 @@
                 <button class="diff-btn" onclick="setMathsDifficulty('moyen')">Moyen</button>
                 <button class="diff-btn" onclick="setMathsDifficulty('difficile')">Difficile</button>
             </div>
-            <div id="maths-consigne" class="consigne"></div>
             <div id="maths-game" class="game-area">
                 <div id="maths-hands" class="hands-display hidden"></div>
                 <div id="maths-prompt" class="big-text"></div>
@@ -99,7 +121,6 @@
                 <button class="diff-btn" onclick="setSonsDifficulty('graphemes')">Graphèmes</button>
                 <button class="diff-btn" onclick="setSonsDifficulty('confusions')">Confusions</button>
             </div>
-            <div id="sons-consigne" class="consigne"></div>
             <div id="sons-game" class="game-area">
                 <div id="sons-prompt" class="big-text"></div>
                 <div id="sons-instruction" class="instruction-text"></div>
@@ -122,14 +143,13 @@
                 <div id="stats-content"></div>
             </div>
         </section>
-        </div><!-- fin main-app -->
     </div>
 
     <!-- Modal de félicitations -->
     <div id="bravo-modal" class="modal hidden">
         <div class="modal-content">
             <div id="bravo-animation" class="bravo-animation"></div>
-            <h2 id="bravo-title">Bravo Baptiste ! 🎉</h2>
+            <h2 id="bravo-title">Bravo ! 🎉</h2>
             <p id="bravo-message"></p>
             <div id="bravo-stars" class="bravo-stars"></div>
             <button class="btn-continue" onclick="closeModal()">Continuer !</button>
@@ -137,5 +157,6 @@
     </div>
 
     <script src="app.js"></script>
+    <script src="supabase.js"></script>
 </body>
 </html>
