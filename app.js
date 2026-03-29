@@ -117,8 +117,8 @@ const SONS_DATA = {
             { prompt: "🔊 [i]", speak: "i", instruction: "Quel mot contient le son « i » ?", choices: ["bout", "four", "tapis", "moule"], answer: 2 },
             { prompt: "🔊 [u]", speak: "u", instruction: "Quel mot contient le son « u » (comme dans lune) ?", choices: ["mur", "mot", "bras", "vent"], answer: 0 },
             { prompt: "🔊 [o]", speak: "o", instruction: "Quel mot contient le son « o » ?", choices: ["lit", "sac", "mur", "vélo"], answer: 3 },
-            { prompt: "🔊 [é]", speak: "é", instruction: "Quel mot contient le son « é » ?", choices: ["bébé", "chat", "loup", "dur"], answer: 0 },
-            { prompt: "🔊 [è]", speak: "è", instruction: "Quel mot contient le son « è » ?", choices: ["mur", "forêt", "doux", "goût"], answer: 1 },
+            { prompt: "🔊 [é]", speak: "bé", instruction: "Quel mot contient le son « é » ?", choices: ["bébé", "chat", "loup", "dur"], answer: 0 },
+            { prompt: "🔊 [è]", speak: "lait", instruction: "Quel mot contient le son « è » ?", choices: ["mur", "forêt", "doux", "goût"], answer: 1 },
             // Consonnes
             { prompt: "🔊 [f]", speak: "fe", instruction: "Quel mot contient le son « f » ?", choices: ["girafe", "chat", "loup", "banane"], answer: 0 },
             { prompt: "🔊 [s]", speak: "se", instruction: "Quel mot contient le son « s » ?", choices: ["cerise", "table", "four", "arbre"], answer: 0 },
@@ -153,8 +153,8 @@ const SONS_DATA = {
             { prompt: "ain", speak: "in, comme dans ain", instruction: "Quel mot s'écrit avec « ain » ?", choices: ["pain", "lapin", "timbre", "plein"], answer: 0 },
             { prompt: "ein", speak: "in, comme dans ein", instruction: "Quel mot s'écrit avec « ein » ?", choices: ["peinture", "sapin", "main", "simple"], answer: 0 },
             { prompt: "g", speak: "je, comme dans g", instruction: "Quel mot a le son « j » écrit avec un « g » ?", choices: ["girafe", "jardin", "jouet", "jupe"], answer: 0 },
-            { prompt: "ai", speak: "è, comme dans ai", instruction: "Quel mot s'écrit avec « ai » ?", choices: ["maison", "forêt", "fête", "mère"], answer: 0 },
-            { prompt: "ê", speak: "è, comme dans e accent circonflexe", instruction: "Quel mot s'écrit avec « ê » ?", choices: ["forêt", "maison", "balai", "neige"], answer: 0 },
+            { prompt: "ai", speak: "lait, comme dans ai", instruction: "Quel mot s'écrit avec « ai » ?", choices: ["maison", "forêt", "fête", "mère"], answer: 0 },
+            { prompt: "ê", speak: "fête, comme dans e accent circonflexe", instruction: "Quel mot s'écrit avec « ê » ?", choices: ["forêt", "maison", "balai", "neige"], answer: 0 },
         ]
     },
 
