@@ -88,23 +88,23 @@ const MATHS_DATA = {
     difficile: { min: 1, max: 50, operations: ['+', '-', '×'] }
 };
 
-// Représentation des nombres avec des mains (1-10)
+// Représentation des nombres avec des doigts dessinés
 function getHandEmojis(n) {
     if (n <= 0) return '';
-    if (n <= 5) return '✋'.repeat(0) + getFingers(n);
-    // Plus de 5 : une main ouverte + doigts de l'autre main
-    return '🖐️ ' + getFingers(n - 5);
+    let html = '';
+    for (let i = 0; i < n; i++) {
+        html += '<span class="finger">🖐</span>';
+    }
+    return html;
 }
 
-function getFingers(n) {
-    const hands = {
-        1: '☝️',
-        2: '✌️',
-        3: '🤟',
-        4: '🖖',
-        5: '🖐️',
-    };
-    return hands[n] || '';
+function getFingerDots(n) {
+    if (n <= 0) return '';
+    let html = '';
+    for (let i = 0; i < n; i++) {
+        html += '<span class="finger-dot"></span>';
+    }
+    return html;
 }
 
 const SONS_DATA = {
@@ -379,19 +379,19 @@ function showMathsExercise() {
     document.getElementById('maths-feedback').textContent = '';
     document.getElementById('maths-feedback').className = 'feedback';
 
-    // Afficher les mains si mode doigts
+    // Afficher les doigts si mode doigts
     const handsDiv = document.getElementById('maths-hands');
     if (ex.showHands) {
         handsDiv.classList.remove('hidden');
         handsDiv.innerHTML =
             '<div class="hands-group">' +
                 '<div class="hands-label">' + ex.a + '</div>' +
-                '<div class="hands-emojis">' + getHandEmojis(ex.a) + '</div>' +
+                '<div class="hands-dots">' + getFingerDots(ex.a) + '</div>' +
             '</div>' +
             '<div class="hands-plus">+</div>' +
             '<div class="hands-group">' +
                 '<div class="hands-label">' + ex.b + '</div>' +
-                '<div class="hands-emojis">' + getHandEmojis(ex.b) + '</div>' +
+                '<div class="hands-dots">' + getFingerDots(ex.b) + '</div>' +
             '</div>';
     } else {
         handsDiv.classList.add('hidden');

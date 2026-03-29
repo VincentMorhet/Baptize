@@ -198,9 +198,20 @@ header h1 {
     gap: 4px;
 }
 
-.hands-emojis {
-    font-size: 2.5rem;
-    letter-spacing: 4px;
+.hands-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.finger-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff7043, #e64a19);
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .hands-label {
