@@ -1,3 +1,163 @@
+/* === AUTH SCREEN === */
+#auth-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.auth-container {
+    background: white;
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.auth-container h1 {
+    font-size: 2.2rem;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.auth-subtitle {
+    color: #888;
+    font-size: 1rem;
+    margin-bottom: 28px;
+}
+
+#auth-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #667eea;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: #667eea;
+    transition: all 0.2s;
+}
+
+.auth-tab.active {
+    background: #667eea;
+    color: white;
+}
+
+.auth-tab-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-tab-content input {
+    padding: 14px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.auth-tab-content input:focus {
+    border-color: #667eea;
+}
+
+.auth-btn {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 4px;
+}
+
+.auth-btn:hover {
+    transform: scale(1.02);
+}
+
+.auth-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.auth-skip {
+    margin-top: 20px;
+    padding: 10px;
+    border: none;
+    background: none;
+    color: #999;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.auth-skip:hover {
+    color: #667eea;
+}
+
+.auth-error {
+    margin-top: 12px;
+    padding: 10px;
+    background: #f8d7da;
+    color: #dc3545;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.auth-success {
+    margin-top: 12px;
+    padding: 10px;
+    background: #d4edda;
+    color: #28a745;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+/* User bar when logged in */
+.user-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.user-bar button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.user-bar button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
 /* === RESET & BASE === */
 * {
     margin: 0;
@@ -17,60 +177,6 @@ body {
     margin: 0 auto;
     padding: 16px;
     padding-bottom: 40px;
-}
-
-/* === ÉCRAN D'ACCUEIL === */
-#welcome-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 80vh;
-}
-
-.welcome-content {
-    background: white;
-    border-radius: 24px;
-    padding: 40px 32px;
-    text-align: center;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    max-width: 400px;
-}
-
-.welcome-content h1 {
-    font-size: 2.5rem;
-    margin-bottom: 16px;
-    color: #333;
-}
-
-.welcome-content p {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-#name-input {
-    display: block;
-    width: 100%;
-    padding: 14px 20px;
-    font-size: 1.3rem;
-    font-weight: 600;
-    border: 3px solid #e0e0e0;
-    border-radius: 14px;
-    text-align: center;
-    margin-bottom: 20px;
-    outline: none;
-    transition: border-color 0.2s;
-    font-family: inherit;
-}
-
-#name-input:focus {
-    border-color: #667eea;
-}
-
-#name-input::placeholder {
-    color: #bbb;
-    font-weight: normal;
 }
 
 /* === HEADER === */
@@ -177,24 +283,6 @@ header h1 {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-/* === CONSIGNE === */
-.consigne {
-    text-align: center;
-    font-size: 0.95rem;
-    color: #667eea;
-    font-weight: 600;
-    margin-bottom: 10px;
-    padding: 6px 12px;
-    background: #f0f2ff;
-    border-radius: 10px;
-}
-
-body.in-game .consigne {
-    font-size: 0.8rem;
-    margin-bottom: 6px;
-    padding: 4px 8px;
 }
 
 /* === DIFFICULTY SELECTOR === */
