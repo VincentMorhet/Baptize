@@ -112,26 +112,22 @@ const SONS_DATA = {
     // Les choix erronés ne contiennent JAMAIS le phonème demandé, même écrit différemment
     "sons-simples": {
         exercises: [
-            // Voyelles — speakMode: "tts" force la synthèse vocale pour les phonèmes isolés
-            { prompt: "🔊 [a]", speak: "aaa", speakMode: "tts", instruction: "Quel mot contient le son « a » ?", choices: ["chat", "loup", "jeu", "feu"], answer: 0 },
-            { prompt: "🔊 [i]", speak: "iii", speakMode: "tts", instruction: "Quel mot contient le son « i » ?", choices: ["bout", "four", "tapis", "moule"], answer: 2 },
-            { prompt: "🔊 [u]", speak: "uuu", speakMode: "tts", instruction: "Quel mot contient le son « u » (comme dans lune) ?", choices: ["mur", "mot", "bras", "vent"], answer: 0 },
-            { prompt: "🔊 [o]", speak: "ooo", speakMode: "tts", instruction: "Quel mot contient le son « o » ?", choices: ["lit", "sac", "mur", "vélo"], answer: 3 },
-            { prompt: "🔊 [é]", speak: "éééé", speakMode: "tts", instruction: "Quel mot contient le son « é » ?", choices: ["bébé", "chat", "loup", "dur"], answer: 0 },
-            { prompt: "🔊 [è]", speak: "èèè", speakMode: "tts", instruction: "Quel mot contient le son « è » ?", choices: ["mur", "forêt", "doux", "goût"], answer: 1 },
-            // Consonnes
-            { prompt: "🔊 [f]", speak: "fffeu", speakMode: "tts", instruction: "Quel mot contient le son « f » ?", choices: ["girafe", "chat", "loup", "banane"], answer: 0 },
-            { prompt: "🔊 [s]", speak: "sss", speakMode: "tts", instruction: "Quel mot contient le son « s » ?", choices: ["cerise", "table", "four", "arbre"], answer: 0 },
-            { prompt: "🔊 [k]", speak: "ka", speakMode: "tts", instruction: "Quel mot contient le son « k » ?", choices: ["journal", "sable", "école", "lune"], answer: 2 },
-            { prompt: "🔊 [j]", speak: "jjje", speakMode: "tts", instruction: "Quel mot contient le son « j » (comme dans jeu) ?", choices: ["gilet", "balle", "pomme", "robe"], answer: 0 },
-            // Sons nasaux
-            { prompt: "🔊 [on]", speak: "on on on", speakMode: "tts", instruction: "Quel mot contient le son « on » ?", choices: ["maison", "lapin", "salade", "vélo"], answer: 0 },
-            { prompt: "🔊 [an]", speak: "an an an", speakMode: "tts", instruction: "Quel mot contient le son « an » ?", choices: ["maman", "souris", "tapis", "loup"], answer: 0 },
-            { prompt: "🔊 [in]", speak: "in in in", speakMode: "tts", instruction: "Quel mot contient le son « in » ?", choices: ["pomme", "lapin", "mouton", "gâteau"], answer: 1 },
-            // Sons composés
-            { prompt: "🔊 [ou]", speak: "ou ou ou", speakMode: "tts", instruction: "Quel mot contient le son « ou » ?", choices: ["mouton", "matin", "sapin", "balai"], answer: 0 },
-            { prompt: "🔊 [oi]", speak: "oi oi oi", speakMode: "tts", instruction: "Quel mot contient le son « oi » ?", choices: ["jardin", "fleur", "voiture", "ballon"], answer: 2 },
-            { prompt: "🔊 [ch]", speak: "ch ch ch", speakMode: "tts", instruction: "Quel mot contient le son « ch » ?", choices: ["garçon", "cheval", "ballon", "table"], answer: 1 },
+            { prompt: "[a]", instruction: "Quel mot contient le son « a » ?", choices: ["chat", "loup", "jeu", "feu"], answer: 0 },
+            { prompt: "[i]", instruction: "Quel mot contient le son « i » ?", choices: ["bout", "four", "tapis", "moule"], answer: 2 },
+            { prompt: "[u]", instruction: "Quel mot contient le son « u » (comme dans lune) ?", choices: ["mur", "mot", "bras", "vent"], answer: 0 },
+            { prompt: "[o]", instruction: "Quel mot contient le son « o » ?", choices: ["lit", "sac", "mur", "vélo"], answer: 3 },
+            { prompt: "[é]", instruction: "Quel mot contient le son « é » ?", choices: ["bébé", "chat", "loup", "dur"], answer: 0 },
+            { prompt: "[è]", instruction: "Quel mot contient le son « è » ?", choices: ["mur", "forêt", "doux", "goût"], answer: 1 },
+            { prompt: "[f]", instruction: "Quel mot contient le son « f » ?", choices: ["girafe", "chat", "loup", "banane"], answer: 0 },
+            { prompt: "[s]", instruction: "Quel mot contient le son « s » ?", choices: ["cerise", "table", "four", "arbre"], answer: 0 },
+            { prompt: "[k]", instruction: "Quel mot contient le son « k » ?", choices: ["journal", "sable", "école", "lune"], answer: 2 },
+            { prompt: "[j]", instruction: "Quel mot contient le son « j » (comme dans jeu) ?", choices: ["gilet", "balle", "pomme", "robe"], answer: 0 },
+            { prompt: "[on]", instruction: "Quel mot contient le son « on » ?", choices: ["maison", "lapin", "salade", "vélo"], answer: 0 },
+            { prompt: "[an]", instruction: "Quel mot contient le son « an » ?", choices: ["maman", "souris", "tapis", "loup"], answer: 0 },
+            { prompt: "[in]", instruction: "Quel mot contient le son « in » ?", choices: ["pomme", "lapin", "mouton", "gâteau"], answer: 1 },
+            { prompt: "[ou]", instruction: "Quel mot contient le son « ou » ?", choices: ["mouton", "matin", "sapin", "balai"], answer: 0 },
+            { prompt: "[oi]", instruction: "Quel mot contient le son « oi » ?", choices: ["jardin", "fleur", "voiture", "ballon"], answer: 2 },
+            { prompt: "[ch]", instruction: "Quel mot contient le son « ch » ?", choices: ["garçon", "cheval", "ballon", "table"], answer: 1 },
         ]
     },
 
@@ -570,11 +566,9 @@ function showSonsExercise() {
 
     // Afficher le prompt avec le bouton haut-parleur si un son est disponible
     const promptDiv = document.getElementById('sons-prompt');
-    const speakMode = ex.speakMode || 'wiki';
     if (ex.speak) {
-        promptDiv.innerHTML = ex.prompt + ' <button class="speak-btn" onclick="speakFrench(\'' + ex.speak.replace(/'/g, "\\'") + '\', \'' + speakMode + '\')">🔊</button>';
-        // Jouer le son automatiquement
-        setTimeout(() => speakFrench(ex.speak, speakMode), 300);
+        promptDiv.innerHTML = ex.prompt + ' <button class="speak-btn" onclick="speakFrench(\'' + ex.speak.replace(/'/g, "\\'") + '\')">🔊</button>';
+        setTimeout(() => speakFrench(ex.speak), 300);
     } else {
         promptDiv.textContent = ex.prompt;
     }
@@ -805,7 +799,7 @@ function hideNextButton(containerId) {
 const audioCache = {};
 let currentAudio = null;
 
-function speakFrench(text, mode) {
+function speakFrench(word) {
     // Arrêter l'audio en cours
     if (currentAudio) {
         currentAudio.pause();
@@ -813,20 +807,12 @@ function speakFrench(text, mode) {
         currentAudio = null;
     }
 
-    // Mode "tts" : utiliser la synthèse vocale pour les phonèmes
-    if (mode === 'tts') {
-        speakTTS(text);
-        return;
-    }
+    const w = word.trim().toLowerCase();
+    const filename = 'File:Fr-' + w + '.ogg';
+    const filenameAlt = 'File:Fr-' + w.charAt(0).toUpperCase() + w.slice(1) + '.ogg';
 
-    // Mode par défaut ("wiki") : chercher sur Wikimedia Commons
-    const word = text.trim().toLowerCase();
-    const filename = 'File:Fr-' + word + '.ogg';
-    const filenameAlt = 'File:Fr-' + word.charAt(0).toUpperCase() + word.slice(1) + '.ogg';
-
-    // Vérifier le cache
-    if (audioCache[word]) {
-        playAudioUrl(audioCache[word]);
+    if (audioCache[w]) {
+        playAudioUrl(audioCache[w]);
         return;
     }
 
@@ -841,39 +827,16 @@ function speakFrench(text, mode) {
             const found = Object.values(pages).find(p => p.imageinfo && p.imageinfo[0]);
             if (found) {
                 const url = found.imageinfo[0].url;
-                audioCache[word] = url;
+                audioCache[w] = url;
                 playAudioUrl(url);
-            } else {
-                speakTTS(text);
             }
         })
-        .catch(() => {
-            speakTTS(text);
-        });
+        .catch(() => {});
 }
 
 function playAudioUrl(url) {
     currentAudio = new Audio(url);
     currentAudio.play().catch(() => {});
-}
-
-function speakTTS(text) {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 0.6;
-    utterance.pitch = 1.0;
-    const voices = window.speechSynthesis.getVoices();
-    const frVoice = voices.find(v => v.lang === 'fr-FR') || voices.find(v => v.lang.startsWith('fr'));
-    if (frVoice) utterance.voice = frVoice;
-    window.speechSynthesis.speak(utterance);
-}
-
-// Précharger les voix pour le fallback
-if ('speechSynthesis' in window) {
-    window.speechSynthesis.getVoices();
-    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 }
 
 // === UTILITAIRES ===
