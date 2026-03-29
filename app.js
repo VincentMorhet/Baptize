@@ -282,7 +282,7 @@ function generateMathExercise(config) {
         answer = a * b;
     }
 
-    const prompt = `${a} ${op} ${b} = ?`;
+    const promptHtml = `${colorizeNumber(a)} <span class="math-op">${op}</span> ${colorizeNumber(b)} <span class="math-op">=</span> <span class="math-op">?</span>`;
 
     // Générer des mauvaises réponses proches
     let choices = [answer];
@@ -295,7 +295,7 @@ function generateMathExercise(config) {
     choices = shuffle(choices);
     const correctIndex = choices.indexOf(answer);
 
-    return { prompt, choices, answer: correctIndex };
+    return { promptHtml, choices, answer: correctIndex };
 }
 
 function showMathsExercise() {
@@ -305,7 +305,7 @@ function showMathsExercise() {
     }
 
     const ex = state.currentExercises[state.currentIndex];
-    document.getElementById('maths-prompt').textContent = ex.prompt;
+    document.getElementById('maths-prompt').innerHTML = ex.promptHtml;
     document.getElementById('maths-feedback').textContent = '';
     document.getElementById('maths-feedback').className = 'feedback';
 
@@ -316,7 +316,7 @@ function showMathsExercise() {
     ex.choices.forEach((choice, i) => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
-        btn.textContent = choice;
+        btn.innerHTML = colorizeNumber(choice);
         btn.onclick = () => answerMaths(i, ex.answer, btn);
         choicesDiv.appendChild(btn);
     });
@@ -547,6 +547,26 @@ function showTrophees() {
 }
 
 // === UTILITAIRES ===
+
+function colorizeNumber(n) {
+    const str = String(n);
+    if (str === '0') return '<span class="digit-zero">0</span>';
+    if (str.length === 1) return `<span class="digit-unit">${str}</span>`;
+
+    let html = '';
+    for (let i = 0; i < str.length; i++) {
+        const digit = str[i];
+        const position = str.length - 1 - i; // 0 = unités, 1 = dizaines, 2 = centaines...
+        if (digit === '0') {
+            html += `<span class="digit-zero">${digit}</span>`;
+        } else if (position >= 1) {
+            html += `<span class="digit-ten">${digit}</span>`;
+        } else {
+            html += `<span class="digit-unit">${digit}</span>`;
+        }
+    }
+    return html;
+}
 
 function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
