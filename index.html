@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baptize - Apprends en t'amusant !</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>🎓 Baptize</h1>
+            <p class="subtitle">Apprends en t'amusant, Baptiste !</p>
+            <div id="stars-display">
+                <span id="stars-count">0</span> ⭐
+            </div>
+        </header>
+
+        <nav id="main-menu">
+            <button class="menu-btn" data-section="lecture" onclick="showSection('lecture')">
+                <span class="menu-icon">📖</span>
+                <span class="menu-label">Lecture</span>
+            </button>
+            <button class="menu-btn" data-section="maths" onclick="showSection('maths')">
+                <span class="menu-icon">🔢</span>
+                <span class="menu-label">Maths</span>
+            </button>
+            <button class="menu-btn" data-section="sons" onclick="showSection('sons')">
+                <span class="menu-icon">🔊</span>
+                <span class="menu-label">Sons</span>
+            </button>
+            <button class="menu-btn" data-section="recompenses" onclick="showSection('recompenses')">
+                <span class="menu-icon">🏆</span>
+                <span class="menu-label">Trophées</span>
+            </button>
+        </nav>
+
+        <!-- SECTION LECTURE -->
+        <section id="section-lecture" class="game-section hidden">
+            <h2>📖 Lecture</h2>
+            <div class="difficulty-selector">
+                <button class="diff-btn active" onclick="setLectureDifficulty('syllabes')">Syllabes</button>
+                <button class="diff-btn" onclick="setLectureDifficulty('mots')">Mots</button>
+                <button class="diff-btn" onclick="setLectureDifficulty('phrases')">Phrases</button>
+            </div>
+            <div id="lecture-game" class="game-area">
+                <div id="lecture-prompt" class="big-text"></div>
+                <div id="lecture-choices" class="choices-grid"></div>
+                <div id="lecture-feedback" class="feedback"></div>
+                <div class="progress-bar-container">
+                    <div id="lecture-progress" class="progress-bar"></div>
+                </div>
+                <p class="progress-text"><span id="lecture-current">0</span> / <span id="lecture-total">5</span></p>
+            </div>
+        </section>
+
+        <!-- SECTION MATHS -->
+        <section id="section-maths" class="game-section hidden">
+            <h2>🔢 Maths</h2>
+            <div class="difficulty-selector">
+                <button class="diff-btn active" onclick="setMathsDifficulty('facile')">Facile</button>
+                <button class="diff-btn" onclick="setMathsDifficulty('moyen')">Moyen</button>
+                <button class="diff-btn" onclick="setMathsDifficulty('difficile')">Difficile</button>
+            </div>
+            <div id="maths-game" class="game-area">
+                <div id="maths-prompt" class="big-text"></div>
+                <div id="maths-choices" class="choices-grid"></div>
+                <div id="maths-feedback" class="feedback"></div>
+                <div class="progress-bar-container">
+                    <div id="maths-progress" class="progress-bar"></div>
+                </div>
+                <p class="progress-text"><span id="maths-current">0</span> / <span id="maths-total">5</span></p>
+            </div>
+        </section>
+
+        <!-- SECTION SONS -->
+        <section id="section-sons" class="game-section hidden">
+            <h2>🔊 Sons et Lettres</h2>
+            <div class="difficulty-selector">
+                <button class="diff-btn active" onclick="setSonsDifficulty('lettres')">Lettres</button>
+                <button class="diff-btn" onclick="setSonsDifficulty('sons-complexes')">Sons complexes</button>
+            </div>
+            <div id="sons-game" class="game-area">
+                <div id="sons-prompt" class="big-text"></div>
+                <div id="sons-instruction" class="instruction-text"></div>
+                <div id="sons-choices" class="choices-grid"></div>
+                <div id="sons-feedback" class="feedback"></div>
+                <div class="progress-bar-container">
+                    <div id="sons-progress" class="progress-bar"></div>
+                </div>
+                <p class="progress-text"><span id="sons-current">0</span> / <span id="sons-total">5</span></p>
+            </div>
+        </section>
+
+        <!-- SECTION RECOMPENSES -->
+        <section id="section-recompenses" class="game-section hidden">
+            <h2>🏆 Mes Trophées</h2>
+            <div id="trophees-grid" class="trophees-grid"></div>
+            <div class="stats-container">
+                <h3>Mes statistiques</h3>
+                <div id="stats-content"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal de félicitations -->
+    <div id="bravo-modal" class="modal hidden">
+        <div class="modal-content">
+            <div id="bravo-animation" class="bravo-animation"></div>
+            <h2 id="bravo-title">Bravo Baptiste ! 🎉</h2>
+            <p id="bravo-message"></p>
+            <div id="bravo-stars" class="bravo-stars"></div>
+            <button class="btn-continue" onclick="closeModal()">Continuer !</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
