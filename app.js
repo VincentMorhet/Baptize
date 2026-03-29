@@ -797,22 +797,32 @@ function hideNextButton(containerId) {
     container.innerHTML = '';
 }
 
-// === SYNTHÈSE VOCALE ===
+// === LECTURE AUDIO ===
+
+let currentAudio = null;
 
 function speakFrench(text) {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 0.8; // Un peu plus lent pour un enfant
-    utterance.pitch = 1.0;
+    // Arrêter le son en cours
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+    }
 
-    // Essayer de trouver une voix française
-    const voices = window.speechSynthesis.getVoices();
-    const frVoice = voices.find(v => v.lang.startsWith('fr'));
-    if (frVoice) utterance.voice = frVoice;
-
-    window.speechSynthesis.speak(utterance);
+    const url = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=fr&q=' + encodeURIComponent(text);
+    currentAudio = new Audio(url);
+    currentAudio.play().catch(() => {
+        // Fallback sur la synthèse vocale du navigateur
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.8;
+            const voices = window.speechSynthesis.getVoices();
+            const frVoice = voices.find(v => v.lang.startsWith('fr'));
+            if (frVoice) utterance.voice = frVoice;
+            window.speechSynthesis.speak(utterance);
+        }
+    });
 }
 
 // === UTILITAIRES ===
