@@ -8,9 +8,21 @@
 </head>
 <body>
     <div id="app">
+        <!-- ÉCRAN D'ACCUEIL -->
+        <div id="welcome-screen">
+            <div class="welcome-content">
+                <h1>🎓 Baptize</h1>
+                <p>Comment tu t'appelles ?</p>
+                <input type="text" id="name-input" placeholder="Ton prénom" maxlength="20" autocomplete="off">
+                <button id="name-submit" class="btn-continue" onclick="submitName()">C'est parti !</button>
+            </div>
+        </div>
+
+        <!-- APP PRINCIPALE (cachée au départ) -->
+        <div id="main-app" class="hidden">
         <header>
             <h1>🎓 Baptize</h1>
-            <p class="subtitle">Apprends en t'amusant, Baptiste !</p>
+            <p class="subtitle">Apprends en t'amusant, <span id="player-name">Baptiste</span> !</p>
             <div id="stars-display">
                 <span id="stars-count">0</span> ⭐
             </div>
@@ -110,6 +122,7 @@
                 <div id="stats-content"></div>
             </div>
         </section>
+        </div><!-- fin main-app -->
     </div>
 
     <!-- Modal de félicitations -->

@@ -192,7 +192,7 @@ const TROPHEES = [
 ];
 
 const ENCOURAGEMENTS = [
-    "Super, Baptiste ! 👏",
+    "Super, {name} ! 👏",
     "Excellent ! Tu es génial ! 🌟",
     "Bravo, continue comme ça ! 💪",
     "Trop fort ! 🎯",
@@ -205,6 +205,10 @@ const ENCOURAGEMENTS_ERROR = [
     "Pas tout à fait, courage ! 💪",
     "Ce n'est pas grave, on réessaie ! 🌈",
 ];
+
+function withName(text) {
+    return text.replace('{name}', getPlayerName());
+}
 
 // === ÉTAT DU JEU ===
 
@@ -227,6 +231,29 @@ let state = {
     isAnswering: false,
     pendingTimeout: null,
 };
+
+// === PRÉNOM ===
+
+function getPlayerName() {
+    return localStorage.getItem('baptize_name') || '';
+}
+
+function submitName() {
+    const input = document.getElementById('name-input');
+    const name = input.value.trim();
+    if (!name) {
+        input.focus();
+        return;
+    }
+    localStorage.setItem('baptize_name', name);
+    showMainApp(name);
+}
+
+function showMainApp(name) {
+    document.getElementById('welcome-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.remove('hidden');
+    document.getElementById('player-name').textContent = name;
+}
 
 // === SAUVEGARDE ===
 
@@ -367,7 +394,7 @@ function answerLecture(chosen, correct, btn) {
 
     if (chosen === correct) {
         btn.classList.add('correct');
-        feedback.textContent = randomItem(ENCOURAGEMENTS);
+        feedback.textContent = withName(randomItem(ENCOURAGEMENTS));
         feedback.className = 'feedback success';
         state.correctCount++;
         state.stars++;
@@ -523,7 +550,7 @@ function answerMaths(chosen, correct, btn) {
 
     if (chosen === correct) {
         btn.classList.add('correct');
-        feedback.textContent = randomItem(ENCOURAGEMENTS);
+        feedback.textContent = withName(randomItem(ENCOURAGEMENTS));
         feedback.className = 'feedback success';
         state.correctCount++;
         state.stars++;
@@ -627,7 +654,7 @@ function answerSons(chosen, correct, btn) {
 
     if (chosen === correct) {
         btn.classList.add('correct');
-        feedback.textContent = randomItem(ENCOURAGEMENTS);
+        feedback.textContent = withName(randomItem(ENCOURAGEMENTS));
         feedback.className = 'feedback success';
         state.correctCount++;
         state.stars++;
@@ -675,17 +702,18 @@ function endSeries(type) {
     const message = document.getElementById('bravo-message');
     const starsDiv = document.getElementById('bravo-stars');
 
+    const name = getPlayerName();
     if (isPerfect) {
         animation.textContent = '🎉';
-        title.textContent = 'Parfait, Baptiste ! 🏆';
+        title.textContent = `Parfait, ${name} ! 🏆`;
         message.textContent = `${correct}/${total} — Incroyable, aucune erreur ! +3 étoiles bonus !`;
     } else if (correct >= 3) {
         animation.textContent = '👏';
-        title.textContent = 'Bravo Baptiste ! 😊';
+        title.textContent = `Bravo ${name} ! 😊`;
         message.textContent = `${correct}/${total} — C'est très bien, continue comme ça !`;
     } else {
         animation.textContent = '💪';
-        title.textContent = 'Courage Baptiste ! 🌈';
+        title.textContent = `Courage ${name} ! 🌈`;
         message.textContent = `${correct}/${total} — Tu vas y arriver, on réessaie !`;
     }
 
@@ -920,3 +948,14 @@ function updateProgress(section) {
 // === INITIALISATION ===
 
 loadState();
+
+// Si un prénom est déjà enregistré, aller directement à l'app
+const savedName = getPlayerName();
+if (savedName) {
+    showMainApp(savedName);
+}
+
+// Permettre de valider avec Entrée
+document.getElementById('name-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitName();
+});
