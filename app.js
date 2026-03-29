@@ -242,6 +242,7 @@ function startLecture() {
         state.pendingTimeout = null;
     }
     state.isAnswering = false;
+    hideNextButton('lecture-next');
     document.getElementById('lecture-choices').innerHTML = '';
     document.getElementById('lecture-feedback').textContent = '';
     document.getElementById('lecture-feedback').className = 'feedback';
@@ -309,11 +310,10 @@ function answerLecture(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('lecture');
 
-    state.pendingTimeout = setTimeout(() => {
-        state.pendingTimeout = null;
+    showNextButton('lecture-next', () => {
         document.getElementById('lecture-choices').innerHTML = '';
         showLectureExercise();
-    }, 1200);
+    });
 }
 
 // === MATHS ===
@@ -330,6 +330,7 @@ function startMaths() {
         clearTimeout(state.pendingTimeout);
         state.pendingTimeout = null;
     }
+    hideNextButton('maths-next');
 
     state.currentExercises = [];
     const config = MATHS_DATA[state.mathsDifficulty];
@@ -464,8 +465,7 @@ function answerMaths(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('maths');
 
-    state.pendingTimeout = setTimeout(() => {
-        state.pendingTimeout = null;
+    showNextButton('maths-next', () => {
         document.getElementById('maths-choices').innerHTML = '';
         document.getElementById('maths-prompt').innerHTML = '';
         document.getElementById('maths-hands').innerHTML = '';
@@ -473,7 +473,7 @@ function answerMaths(chosen, correct, btn) {
         document.getElementById('maths-feedback').textContent = '';
         document.getElementById('maths-feedback').className = 'feedback';
         requestAnimationFrame(() => showMathsExercise());
-    }, 1200);
+    });
 }
 
 // === SONS ===
@@ -491,6 +491,7 @@ function startSons() {
         state.pendingTimeout = null;
     }
     state.isAnswering = false;
+    hideNextButton('sons-next');
     document.getElementById('sons-choices').innerHTML = '';
     document.getElementById('sons-feedback').textContent = '';
     document.getElementById('sons-feedback').className = 'feedback';
@@ -558,11 +559,10 @@ function answerSons(chosen, correct, btn) {
     state.currentIndex++;
     updateProgress('sons');
 
-    state.pendingTimeout = setTimeout(() => {
-        state.pendingTimeout = null;
+    showNextButton('sons-next', () => {
         document.getElementById('sons-choices').innerHTML = '';
         showSonsExercise();
-    }, 1200);
+    });
 }
 
 // === FIN DE SÉRIE ===
@@ -682,6 +682,54 @@ function showTrophees() {
             <span class="stat-value">${state.trophees.length}/${TROPHEES.length}</span>
         </div>
     `;
+}
+
+// === BOUTON SUIVANT AVEC TIMER CIRCULAIRE ===
+
+const NEXT_TIMER_MS = 15000;
+
+function showNextButton(containerId, callback) {
+    const container = document.getElementById(containerId);
+    container.classList.remove('hidden');
+    container.innerHTML = `
+        <button class="next-btn" id="${containerId}-btn">
+            <svg class="next-timer-ring" viewBox="0 0 44 44">
+                <circle class="next-timer-bg" cx="22" cy="22" r="20" />
+                <circle class="next-timer-progress" cx="22" cy="22" r="20" />
+            </svg>
+            <span class="next-btn-label">Suivant ▶</span>
+        </button>
+    `;
+
+    const btn = document.getElementById(`${containerId}-btn`);
+    const progress = container.querySelector('.next-timer-progress');
+
+    // Lancer l'animation du cercle
+    progress.style.animationDuration = NEXT_TIMER_MS + 'ms';
+    progress.classList.add('next-timer-animate');
+
+    // Auto-passer au bout de 15s
+    state.pendingTimeout = setTimeout(() => {
+        state.pendingTimeout = null;
+        hideNextButton(containerId);
+        callback();
+    }, NEXT_TIMER_MS);
+
+    // Clic pour passer tout de suite
+    btn.onclick = () => {
+        if (state.pendingTimeout) {
+            clearTimeout(state.pendingTimeout);
+            state.pendingTimeout = null;
+        }
+        hideNextButton(containerId);
+        callback();
+    };
+}
+
+function hideNextButton(containerId) {
+    const container = document.getElementById(containerId);
+    container.classList.add('hidden');
+    container.innerHTML = '';
 }
 
 // === UTILITAIRES ===
