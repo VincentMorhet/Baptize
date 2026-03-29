@@ -125,6 +125,24 @@ header h1 {
     }
 }
 
+/* === CONSIGNE === */
+.consigne {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #667eea;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding: 6px 12px;
+    background: #f0f2ff;
+    border-radius: 10px;
+}
+
+body.in-game .consigne {
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    padding: 4px 8px;
+}
+
 /* === DIFFICULTY SELECTOR === */
 .difficulty-selector {
     display: flex;

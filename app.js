@@ -279,6 +279,29 @@ function showSection(section) {
     else if (section === 'recompenses') showTrophees();
 }
 
+// === CONSIGNES ===
+
+const CONSIGNES = {
+    // Lecture
+    syllabes: "Trouve le mot qui commence par la syllabe affichée.",
+    mots: "Regarde l'image et trouve le bon mot.",
+    phrases: "Lis la phrase et choisis le mot qui manque.",
+    // Maths
+    doigts: "Compte les ronds et trouve le résultat.",
+    facile: "Trouve le résultat du calcul.",
+    moyen: "Trouve le résultat du calcul.",
+    difficile: "Trouve le résultat du calcul.",
+    // Sons
+    "sons-simples": "Trouve le mot qui contient le son affiché.",
+    graphemes: "Écoute le mot et trouve comment le son s'écrit.",
+    confusions: "Écoute le mot et choisis la bonne écriture.",
+};
+
+function updateConsigne(section, difficulty) {
+    const el = document.getElementById(section + '-consigne');
+    if (el) el.textContent = CONSIGNES[difficulty] || '';
+}
+
 // === LECTURE ===
 
 function setLectureDifficulty(diff) {
@@ -303,6 +326,7 @@ function startLecture() {
     state.currentExercises = shuffle([...data.exercises]).slice(0, 5);
     state.currentIndex = 0;
     state.correctCount = 0;
+    updateConsigne('lecture', state.lectureDifficulty);
     updateProgress('lecture');
     showLectureExercise();
 }
@@ -400,6 +424,7 @@ function startMaths() {
     document.getElementById('maths-hands').classList.add('hidden');
     document.getElementById('maths-feedback').textContent = '';
     document.getElementById('maths-feedback').className = 'feedback';
+    updateConsigne('maths', state.mathsDifficulty);
     updateProgress('maths');
     showMathsExercise();
 }
@@ -552,6 +577,7 @@ function startSons() {
     state.currentExercises = shuffle([...data.exercises]).slice(0, 5);
     state.currentIndex = 0;
     state.correctCount = 0;
+    updateConsigne('sons', state.sonsDifficulty);
     updateProgress('sons');
     showSonsExercise();
 }
