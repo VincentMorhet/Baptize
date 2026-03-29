@@ -281,11 +281,25 @@ header h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.choice-btn:focus {
+    outline: none;
+    border-color: #e0e0e0;
 }
 
 .choice-btn:hover:not(:disabled) {
     border-color: #667eea;
     transform: scale(1.03);
+}
+
+@media (hover: none) {
+    .choice-btn:hover:not(:disabled) {
+        border-color: #e0e0e0;
+        transform: none;
+    }
 }
 
 .choice-btn:disabled {
