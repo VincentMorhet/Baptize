@@ -302,6 +302,77 @@ header h1 {
     }
 }
 
+/* === BOUTON SUIVANT AVEC TIMER === */
+.next-btn-container {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+}
+
+.next-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 28px 12px 16px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.next-btn:hover {
+    transform: scale(1.05);
+}
+
+.next-btn:active {
+    transform: scale(0.97);
+}
+
+.next-timer-ring {
+    width: 36px;
+    height: 36px;
+    transform: rotate(-90deg);
+}
+
+.next-timer-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 3;
+}
+
+.next-timer-progress {
+    fill: none;
+    stroke: white;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 125.66;
+    stroke-dashoffset: 125.66;
+}
+
+.next-timer-animate {
+    animation: timer-countdown linear forwards;
+}
+
+@keyframes timer-countdown {
+    from {
+        stroke-dashoffset: 125.66;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.next-btn-label {
+    letter-spacing: 0.5px;
+}
+
 .choice-btn:disabled {
     cursor: default;
     opacity: 0.8;
