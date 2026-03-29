@@ -82,10 +82,30 @@ const LECTURE_DATA = {
 };
 
 const MATHS_DATA = {
+    doigts: { min: 1, max: 5, operations: ['+'], showHands: true },
     facile: { min: 1, max: 10, operations: ['+'] },
     moyen: { min: 1, max: 20, operations: ['+', '-'] },
     difficile: { min: 1, max: 50, operations: ['+', '-', '×'] }
 };
+
+// Représentation des nombres avec des mains (1-10)
+function getHandEmojis(n) {
+    if (n <= 0) return '';
+    if (n <= 5) return '✋'.repeat(0) + getFingers(n);
+    // Plus de 5 : une main ouverte + doigts de l'autre main
+    return '🖐️ ' + getFingers(n - 5);
+}
+
+function getFingers(n) {
+    const hands = {
+        1: '☝️',
+        2: '✌️',
+        3: '🤟',
+        4: '🖖',
+        5: '🖐️',
+    };
+    return hands[n] || '';
+}
 
 const SONS_DATA = {
     lettres: {
@@ -312,13 +332,18 @@ function generateMathExercise(config) {
     const op = randomItem(config.operations);
     let a, b, answer;
 
-    if (op === '+') {
+    if (config.showHands) {
+        // Mode doigts : uniquement des additions simples avec résultat <= 10
+        a = randomInt(1, 5);
+        b = randomInt(1, 5);
+        answer = a + b;
+    } else if (op === '+') {
         a = randomInt(config.min, config.max);
         b = randomInt(config.min, config.max);
         answer = a + b;
     } else if (op === '-') {
         a = randomInt(config.min, config.max);
-        b = randomInt(config.min, a); // b <= a pour éviter les négatifs
+        b = randomInt(config.min, a);
         answer = a - b;
     } else if (op === '×') {
         a = randomInt(1, 10);
@@ -330,8 +355,9 @@ function generateMathExercise(config) {
 
     // Générer des mauvaises réponses proches
     let choices = [answer];
+    const range = config.showHands ? 3 : 5;
     while (choices.length < 4) {
-        const wrong = answer + randomInt(-5, 5);
+        const wrong = answer + randomInt(-range, range);
         if (wrong !== answer && wrong >= 0 && !choices.includes(wrong)) {
             choices.push(wrong);
         }
@@ -339,7 +365,7 @@ function generateMathExercise(config) {
     choices = shuffle(choices);
     const correctIndex = choices.indexOf(answer);
 
-    return { promptHtml, choices, answer: correctIndex };
+    return { promptHtml, choices, answer: correctIndex, a, b, showHands: !!config.showHands };
 }
 
 function showMathsExercise() {
@@ -352,6 +378,25 @@ function showMathsExercise() {
     document.getElementById('maths-prompt').innerHTML = ex.promptHtml;
     document.getElementById('maths-feedback').textContent = '';
     document.getElementById('maths-feedback').className = 'feedback';
+
+    // Afficher les mains si mode doigts
+    const handsDiv = document.getElementById('maths-hands');
+    if (ex.showHands) {
+        handsDiv.classList.remove('hidden');
+        handsDiv.innerHTML =
+            '<div class="hands-group">' +
+                '<div class="hands-label">' + ex.a + '</div>' +
+                '<div class="hands-emojis">' + getHandEmojis(ex.a) + '</div>' +
+            '</div>' +
+            '<div class="hands-plus">+</div>' +
+            '<div class="hands-group">' +
+                '<div class="hands-label">' + ex.b + '</div>' +
+                '<div class="hands-emojis">' + getHandEmojis(ex.b) + '</div>' +
+            '</div>';
+    } else {
+        handsDiv.classList.add('hidden');
+        handsDiv.innerHTML = '';
+    }
 
     const choicesDiv = document.getElementById('maths-choices');
     choicesDiv.innerHTML = '';
@@ -398,7 +443,12 @@ function answerMaths(chosen, correct, btn) {
 
     setTimeout(() => {
         document.getElementById('maths-choices').innerHTML = '';
-        showMathsExercise();
+        document.getElementById('maths-prompt').innerHTML = '';
+        document.getElementById('maths-hands').innerHTML = '';
+        document.getElementById('maths-hands').classList.add('hidden');
+        document.getElementById('maths-feedback').textContent = '';
+        document.getElementById('maths-feedback').className = 'feedback';
+        requestAnimationFrame(() => showMathsExercise());
     }, 1200);
 }
 

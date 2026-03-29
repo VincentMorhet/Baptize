@@ -58,11 +58,13 @@
         <section id="section-maths" class="game-section hidden">
             <h2>🔢 Maths</h2>
             <div class="difficulty-selector">
+                <button class="diff-btn" onclick="setMathsDifficulty('doigts')">🖐️ Doigts</button>
                 <button class="diff-btn active" onclick="setMathsDifficulty('facile')">Facile</button>
                 <button class="diff-btn" onclick="setMathsDifficulty('moyen')">Moyen</button>
                 <button class="diff-btn" onclick="setMathsDifficulty('difficile')">Difficile</button>
             </div>
             <div id="maths-game" class="game-area">
+                <div id="maths-hands" class="hands-display hidden"></div>
                 <div id="maths-prompt" class="big-text"></div>
                 <div id="maths-choices" class="choices-grid"></div>
                 <div id="maths-feedback" class="feedback"></div>
