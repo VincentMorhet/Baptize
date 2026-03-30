@@ -7,6 +7,16 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 let currentUser = null;
 let currentChild = null;
 
+// === UTILITAIRES ÉCRANS ===
+
+function hideAllScreens() {
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('child-screen').classList.add('hidden');
+    document.getElementById('config-auth-screen').classList.add('hidden');
+    document.getElementById('config-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
+}
+
 // === AUTHENTIFICATION ===
 
 function showAuthTab(tab) {
@@ -72,14 +82,12 @@ async function loginUser() {
     showChildSelector();
 }
 
-// === GESTION DES ENFANTS ===
+// === SÉLECTION D'ENFANT (écran simple, sans gestion) ===
 
 async function showChildSelector() {
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('app').classList.add('hidden');
+    hideAllScreens();
     document.getElementById('child-screen').classList.remove('hidden');
     document.getElementById('child-error').classList.add('hidden');
-    document.getElementById('new-child-name').value = '';
 
     const { data: children, error } = await supabaseClient
         .from('children')
@@ -90,15 +98,90 @@ async function showChildSelector() {
     const list = document.getElementById('children-list');
     list.innerHTML = '';
 
+    const noChildrenMsg = document.getElementById('no-children-msg');
+    const configLink = document.querySelector('.config-link');
+
+    if (children && children.length > 0) {
+        noChildrenMsg.classList.add('hidden');
+        configLink.classList.remove('hidden');
+        children.forEach(child => {
+            const btn = document.createElement('button');
+            btn.className = 'child-select-btn';
+            btn.innerHTML = `<span class="child-avatar">${child.name.charAt(0).toUpperCase()}</span><span class="child-btn-name">${child.name}</span>`;
+            btn.onclick = () => selectChild(child);
+            list.appendChild(btn);
+        });
+    } else {
+        noChildrenMsg.classList.remove('hidden');
+        configLink.classList.add('hidden');
+    }
+}
+
+async function selectChild(child) {
+    currentChild = child;
+    await syncFromCloud();
+    enterApp();
+}
+
+// === VÉRIFICATION MOT DE PASSE POUR CONFIG ===
+
+function showConfigAuth() {
+    hideAllScreens();
+    document.getElementById('config-auth-screen').classList.remove('hidden');
+    document.getElementById('config-password').value = '';
+    document.getElementById('config-auth-error').classList.add('hidden');
+    document.getElementById('config-password').focus();
+}
+
+async function verifyConfigPassword() {
+    const password = document.getElementById('config-password').value;
+    const errorEl = document.getElementById('config-auth-error');
+    errorEl.classList.add('hidden');
+
+    if (!password) {
+        errorEl.textContent = 'Entre ton mot de passe.';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    const email = currentUser.email;
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+    if (error) {
+        errorEl.textContent = 'Mot de passe incorrect.';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    showConfigScreen();
+}
+
+// === ÉCRAN DE CONFIGURATION DES ENFANTS ===
+
+async function showConfigScreen() {
+    hideAllScreens();
+    document.getElementById('config-screen').classList.remove('hidden');
+    document.getElementById('config-error').classList.add('hidden');
+    document.getElementById('config-success').classList.add('hidden');
+    document.getElementById('new-child-name').value = '';
+
+    const { data: children, error } = await supabaseClient
+        .from('children')
+        .select('*')
+        .eq('parent_id', currentUser.id)
+        .order('created_at', { ascending: true });
+
+    const list = document.getElementById('config-children-list');
+    list.innerHTML = '';
+
     if (children && children.length > 0) {
         children.forEach(child => {
             const row = document.createElement('div');
             row.className = 'child-row';
 
-            const btn = document.createElement('button');
-            btn.className = 'child-select-btn';
-            btn.innerHTML = `<span class="child-avatar">${child.name.charAt(0).toUpperCase()}</span><span class="child-btn-name">${child.name}</span>`;
-            btn.onclick = () => selectChild(child);
+            const info = document.createElement('div');
+            info.className = 'child-config-info';
+            info.innerHTML = `<span class="child-avatar">${child.name.charAt(0).toUpperCase()}</span><span class="child-btn-name">${child.name}</span>`;
 
             const actions = document.createElement('div');
             actions.className = 'child-actions';
@@ -107,30 +190,32 @@ async function showChildSelector() {
             editBtn.className = 'child-action-btn';
             editBtn.textContent = '✏️';
             editBtn.title = 'Renommer';
-            editBtn.onclick = (e) => { e.stopPropagation(); openRenameModal(child); };
+            editBtn.onclick = () => openRenameModal(child);
 
             const delBtn = document.createElement('button');
             delBtn.className = 'child-action-btn child-action-delete';
             delBtn.textContent = '🗑️';
             delBtn.title = 'Supprimer';
-            delBtn.onclick = (e) => { e.stopPropagation(); openDeleteModal(child); };
+            delBtn.onclick = () => openDeleteModal(child);
 
             actions.appendChild(editBtn);
             actions.appendChild(delBtn);
-            row.appendChild(btn);
+            row.appendChild(info);
             row.appendChild(actions);
             list.appendChild(row);
         });
     } else {
-        list.innerHTML = '<p class="no-children">Ajoute ton premier enfant pour commencer !</p>';
+        list.innerHTML = '<p class="no-children-text">Aucun enfant pour le moment.</p>';
     }
 }
 
 async function addChild() {
     const nameInput = document.getElementById('new-child-name');
     const name = nameInput.value.trim();
-    const errorEl = document.getElementById('child-error');
+    const errorEl = document.getElementById('config-error');
+    const successEl = document.getElementById('config-success');
     errorEl.classList.add('hidden');
+    successEl.classList.add('hidden');
 
     if (!name) {
         errorEl.textContent = "Entre le prénom de l'enfant.";
@@ -150,49 +235,16 @@ async function addChild() {
     }
 
     nameInput.value = '';
+    successEl.textContent = `${name} a été ajouté !`;
+    successEl.classList.remove('hidden');
+    showConfigScreen();
+}
+
+function backToChildSelector() {
     showChildSelector();
 }
 
-async function selectChild(child) {
-    currentChild = child;
-    await syncFromCloud();
-    enterApp();
-}
-
-// === ENTRÉE DANS L'APP ===
-
-function enterApp() {
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('child-screen').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-
-    // Afficher le nom de l'enfant dans le header
-    if (currentChild) {
-        const bar = document.getElementById('child-bar');
-        bar.classList.remove('hidden');
-        document.getElementById('child-name-display').textContent = currentChild.name;
-    }
-
-    loadState();
-}
-
-function skipAuth() {
-    currentUser = null;
-    currentChild = null;
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('child-screen').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-    loadState();
-}
-
-async function logoutUser() {
-    await supabaseClient.auth.signOut();
-    currentUser = null;
-    currentChild = null;
-    location.reload();
-}
-
-// === GESTION DES COMPTES ENFANTS ===
+// === RENOMMER / SUPPRIMER UN ENFANT ===
 
 let childToEdit = null;
 
@@ -237,7 +289,7 @@ async function confirmRenameChild() {
     }
 
     closeRenameModal();
-    showChildSelector();
+    showConfigScreen();
 }
 
 function openDeleteModal(child) {
@@ -253,14 +305,13 @@ function closeDeleteModal() {
 }
 
 async function confirmDeleteChild() {
-    // Supprimer trophées, scores puis l'enfant
     await supabaseClient.from('trophies').delete().eq('child_id', childToEdit.id);
     await supabaseClient.from('scores').delete().eq('child_id', childToEdit.id);
     const { error } = await supabaseClient.from('children').delete().eq('id', childToEdit.id);
 
     if (error) {
         closeDeleteModal();
-        const errorEl = document.getElementById('child-error');
+        const errorEl = document.getElementById('config-error');
         errorEl.textContent = 'Erreur lors de la suppression. Réessaie.';
         errorEl.classList.remove('hidden');
         return;
@@ -271,7 +322,37 @@ async function confirmDeleteChild() {
     }
 
     closeDeleteModal();
-    showChildSelector();
+    showConfigScreen();
+}
+
+// === ENTRÉE DANS L'APP ===
+
+function enterApp() {
+    hideAllScreens();
+    document.getElementById('app').classList.remove('hidden');
+
+    if (currentChild) {
+        const bar = document.getElementById('child-bar');
+        bar.classList.remove('hidden');
+        document.getElementById('child-name-display').textContent = currentChild.name;
+    }
+
+    loadState();
+}
+
+function skipAuth() {
+    currentUser = null;
+    currentChild = null;
+    hideAllScreens();
+    document.getElementById('app').classList.remove('hidden');
+    loadState();
+}
+
+async function logoutUser() {
+    await supabaseClient.auth.signOut();
+    currentUser = null;
+    currentChild = null;
+    location.reload();
 }
 
 // === SYNCHRONISATION CLOUD ===
@@ -314,7 +395,6 @@ async function syncFromCloud() {
             state.stats = scoreData.stats;
         }
     } else {
-        // Nouveau profil enfant, reset state
         state.stars = 0;
         state.stats = { lecture: 0, maths: 0, sons: 0, perfectSeries: 0 };
         state.trophees = [];

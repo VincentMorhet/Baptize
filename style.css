@@ -189,15 +189,69 @@
     flex: 1;
 }
 
+/* Config auth & config screen */
+#config-auth-screen,
+#config-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.config-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.config-auth-form input {
+    padding: 14px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.config-auth-form input:focus {
+    border-color: #667eea;
+}
+
+.config-container {
+    max-width: 440px;
+}
+
+.config-link {
+    font-size: 0.8rem !important;
+    opacity: 0.6;
+}
+
+.config-link:hover {
+    opacity: 1;
+}
+
+/* Config children list with actions */
 .child-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
-.child-row .child-select-btn {
+.child-config-info {
     flex: 1;
     min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    background: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
 }
 
 .child-actions {
@@ -208,15 +262,14 @@
 }
 
 .child-action-btn {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border: none;
-    border-radius: 8px;
-    background: transparent;
+    border-radius: 10px;
+    background: #f0f0f0;
     cursor: pointer;
-    font-size: 0.85rem;
-    opacity: 0.35;
-    transition: opacity 0.2s, background 0.2s;
+    font-size: 0.9rem;
+    transition: background 0.2s, transform 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -224,8 +277,8 @@
 }
 
 .child-action-btn:hover {
-    opacity: 1;
-    background: #f0f0f0;
+    background: #e0e0e0;
+    transform: scale(1.1);
 }
 
 .child-action-delete:hover {
@@ -236,6 +289,17 @@
     color: #888;
     font-size: 0.95rem;
     padding: 16px 0;
+}
+
+.no-children p {
+    margin-bottom: 14px;
+}
+
+.no-children-text {
+    color: #888;
+    font-size: 0.95rem;
+    padding: 10px 0;
+    text-align: center;
 }
 
 /* Rename modal */

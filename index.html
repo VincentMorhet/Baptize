@@ -50,14 +50,49 @@
 
             <div id="children-list" class="children-list"></div>
 
-            <div id="add-child-form" class="add-child-form">
-                <input type="text" id="new-child-name" placeholder="Prénom de l'enfant" maxlength="30">
-                <button class="auth-btn" onclick="addChild()">Ajouter un enfant</button>
+            <div id="no-children-msg" class="no-children hidden">
+                <p>Aucun enfant configuré.</p>
+                <button class="auth-btn" onclick="showConfigAuth()">Configurer les profils</button>
             </div>
 
             <div id="child-error" class="auth-error hidden"></div>
 
+            <button class="auth-skip config-link" onclick="showConfigAuth()">Gérer les profils</button>
             <button class="auth-skip" onclick="logoutUser()">Se déconnecter</button>
+        </div>
+    </div>
+
+    <!-- Écran de vérification mot de passe pour accéder à la config -->
+    <div id="config-auth-screen" class="hidden">
+        <div class="auth-container">
+            <h1>🔒 Espace parent</h1>
+            <p class="auth-subtitle">Entre ton mot de passe pour continuer</p>
+            <div class="config-auth-form">
+                <input type="password" id="config-password" placeholder="Mot de passe du parent" autocomplete="current-password">
+                <button class="auth-btn" onclick="verifyConfigPassword()">Valider</button>
+            </div>
+            <div id="config-auth-error" class="auth-error hidden"></div>
+            <button class="auth-skip" onclick="backToChildSelector()">Retour</button>
+        </div>
+    </div>
+
+    <!-- Écran de configuration des enfants -->
+    <div id="config-screen" class="hidden">
+        <div class="auth-container config-container">
+            <h1>👨‍👩‍👧‍👦 Profils enfants</h1>
+            <p class="auth-subtitle">Ajouter, renommer ou supprimer</p>
+
+            <div id="config-children-list" class="children-list"></div>
+
+            <div class="add-child-form">
+                <input type="text" id="new-child-name" placeholder="Prénom de l'enfant" maxlength="30">
+                <button class="auth-btn" onclick="addChild()">Ajouter un enfant</button>
+            </div>
+
+            <div id="config-error" class="auth-error hidden"></div>
+            <div id="config-success" class="auth-success hidden"></div>
+
+            <button class="auth-skip" onclick="backToChildSelector()">Retour</button>
         </div>
     </div>
 
