@@ -127,6 +127,21 @@ INSERT INTO exercises (section, difficulty, sort_order, prompt, question, choice
 ('lecture', 'phrases', 40, 'On ___ les bougies sur le gâteau.', 'Quel mot complète la phrase ?', '["mange", "souffle", "coupe", "jette"]', 1);
 
 -- =============================================
+-- Données : LECTURE - Histoires (10)
+-- =============================================
+INSERT INTO exercises (section, difficulty, sort_order, prompt, question, choices, answer) VALUES
+('lecture', 'histoires', 1,  'Le chat dort sur le canapé. Maman ouvre la porte. Le chat se réveille et court vers elle.', 'Où dort le chat ?', '["sur le lit", "sur le canapé", "par terre", "sur la table"]', 1),
+('lecture', 'histoires', 2,  'Tom met ses bottes. Il prend son parapluie. Il sort sous la pluie.', 'Quel temps fait-il ?', '["il neige", "il fait soleil", "il pleut", "il y a du vent"]', 2),
+('lecture', 'histoires', 3,  'Léa cueille une pomme dans le jardin. Elle la lave. Elle la mange avec plaisir.', 'Que fait Léa avec la pomme ?', '["elle la donne", "elle la mange", "elle la jette", "elle la cache"]', 1),
+('lecture', 'histoires', 4,  'Le chien joue dans le parc. Il court après un ballon. Il est très content.', 'Après quoi court le chien ?', '["un chat", "un oiseau", "un ballon", "un os"]', 2),
+('lecture', 'histoires', 5,  'Il fait nuit. Les étoiles brillent dans le ciel. Hugo va au lit.', 'Quand se passe l''histoire ?', '["le matin", "le midi", "l''après-midi", "la nuit"]', 3),
+('lecture', 'histoires', 6,  'Papa prépare un gâteau. Il casse deux œufs. Il met du chocolat.', 'Que prépare papa ?', '["une soupe", "un gâteau", "une salade", "un sandwich"]', 1),
+('lecture', 'histoires', 7,  'Marie dessine un soleil. Elle prend des crayons jaunes. Son dessin est très joli.', 'Que dessine Marie ?', '["une fleur", "une maison", "un soleil", "un arbre"]', 2),
+('lecture', 'histoires', 8,  'Le bus arrive à l''école. Les enfants descendent. Ils vont dans la classe.', 'Où vont les enfants ?', '["au parc", "à la maison", "dans la classe", "au magasin"]', 2),
+('lecture', 'histoires', 9,  'Mamie tricote une écharpe. Elle est rouge et douce. C''est un cadeau pour Léo.', 'Pour qui est l''écharpe ?', '["pour maman", "pour Léo", "pour mamie", "pour papa"]', 1),
+('lecture', 'histoires', 10, 'Le petit oiseau est tombé du nid. Une fille le trouve. Elle le remet dans l''arbre.', 'Où la fille remet l''oiseau ?', '["dans une cage", "dans l''arbre", "dans la maison", "dans le jardin"]', 1);
+
+-- =============================================
 -- Données : SONS - Sons simples (16)
 -- =============================================
 INSERT INTO exercises (section, difficulty, sort_order, prompt, instruction, choices, answer) VALUES
