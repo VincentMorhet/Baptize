@@ -4,7 +4,7 @@
 const SUPABASE_URL = 'https://tcozyqurpozcbefxcfcr.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_TYhiOqGceVuy2wDXnRvnkQ_olWhIk-j';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 let currentProfile = null;
@@ -49,7 +49,7 @@ async function registerUser() {
     if (!email) return showAuthError("Entre l'email du parent.");
     if (password.length < 6) return showAuthError('Le mot de passe doit faire au moins 6 caractères.');
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
         options: { data: { child_name: name } }
@@ -71,7 +71,7 @@ async function loginUser() {
 
     if (!email || !password) return showAuthError('Remplis tous les champs.');
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     if (error) return showAuthError('Email ou mot de passe incorrect.');
 
@@ -84,14 +84,14 @@ async function onAuthSuccess(user, name) {
     currentProfile = { name };
 
     // Créer ou récupérer le profil
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseClient
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
 
     if (!profile) {
-        await supabase.from('profiles').insert({
+        await supabaseClient.from('profiles').insert({
             id: user.id,
             name: name,
             parent_email: user.email,
@@ -137,7 +137,7 @@ function enterApp(childName) {
 }
 
 async function logoutUser() {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     currentUser = null;
     currentProfile = null;
     location.reload();
@@ -148,7 +148,7 @@ async function logoutUser() {
 async function syncToCloud() {
     if (!currentUser) return;
 
-    await supabase.from('scores').upsert({
+    await supabaseClient.from('scores').upsert({
         user_id: currentUser.id,
         category: 'all',
         stars: state.stars,
@@ -160,7 +160,7 @@ async function syncToCloud() {
 
     // Sync trophées
     for (const trophyId of state.trophees) {
-        await supabase.from('trophies').upsert({
+        await supabaseClient.from('trophies').upsert({
             user_id: currentUser.id,
             trophy_id: trophyId,
             unlocked_at: new Date().toISOString(),
@@ -171,7 +171,7 @@ async function syncToCloud() {
 async function syncFromCloud() {
     if (!currentUser) return;
 
-    const { data: scoreData } = await supabase
+    const { data: scoreData } = await supabaseClient
         .from('scores')
         .select('*')
         .eq('user_id', currentUser.id)
@@ -185,7 +185,7 @@ async function syncFromCloud() {
         }
     }
 
-    const { data: trophyData } = await supabase
+    const { data: trophyData } = await supabaseClient
         .from('trophies')
         .select('trophy_id')
         .eq('user_id', currentUser.id);
@@ -202,7 +202,7 @@ async function syncFromCloud() {
 
 async function initAuth() {
     // Vérifier si une session existe déjà
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
 
     if (session) {
         const name = session.user.user_metadata?.child_name || 'Ami';
