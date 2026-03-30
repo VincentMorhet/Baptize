@@ -670,8 +670,8 @@ header h1 {
     padding: 20px 24px;
 }
 
-.story-question {
-    font-size: 1.15rem;
+.instruction-text.story-question {
+    font-size: 1.3rem;
     font-weight: bold;
     font-style: normal;
     color: #333;
@@ -1292,8 +1292,8 @@ body.in-game .big-text.story-text {
     min-height: auto;
 }
 
-body.in-game .story-question {
-    font-size: 1.05rem;
+body.in-game .instruction-text.story-question {
+    font-size: 1.1rem;
     font-weight: bold;
     font-style: normal;
     color: #333;
