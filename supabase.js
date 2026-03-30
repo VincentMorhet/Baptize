@@ -305,6 +305,7 @@ function closeDeleteModal() {
 }
 
 async function confirmDeleteChild() {
+    await supabaseClient.from('exercise_progress').delete().eq('child_id', childToEdit.id);
     await supabaseClient.from('trophies').delete().eq('child_id', childToEdit.id);
     await supabaseClient.from('scores').delete().eq('child_id', childToEdit.id);
     const { error } = await supabaseClient.from('children').delete().eq('id', childToEdit.id);
@@ -377,6 +378,30 @@ async function syncToCloud() {
             unlocked_at: new Date().toISOString(),
         }, { onConflict: 'child_id,trophy_id' });
     }
+
+    // Sync exercise progress
+    var progressRows = [];
+    for (var key in state.exerciseHistory) {
+        var h = state.exerciseHistory[key];
+        progressRows.push({
+            child_id: currentChild.id,
+            exercise_key: key,
+            section: h.section,
+            difficulty: h.difficulty,
+            note: h.note,
+            total_attempts: h.attempts,
+            total_errors: h.errors,
+            total_successes: h.successes,
+            label: h.label,
+            exercise_data: h.exerciseData,
+            last_played_at: h.lastPlayed,
+        });
+    }
+    if (progressRows.length > 0) {
+        await supabaseClient.from('exercise_progress').upsert(progressRows, {
+            onConflict: 'child_id,exercise_key'
+        });
+    }
 }
 
 async function syncFromCloud() {
@@ -398,6 +423,7 @@ async function syncFromCloud() {
         state.stars = 0;
         state.stats = { lecture: 0, maths: 0, sons: 0, perfectSeries: 0 };
         state.trophees = [];
+        state.exerciseHistory = {};
     }
 
     const { data: trophyData } = await supabaseClient
@@ -407,6 +433,31 @@ async function syncFromCloud() {
 
     if (trophyData) {
         state.trophees = trophyData.map(t => t.trophy_id);
+    }
+
+    // Load exercise progress
+    const { data: progressData } = await supabaseClient
+        .from('exercise_progress')
+        .select('*')
+        .eq('child_id', currentChild.id);
+
+    if (progressData && progressData.length > 0) {
+        state.exerciseHistory = {};
+        progressData.forEach(function(p) {
+            state.exerciseHistory[p.exercise_key] = {
+                note: p.note,
+                attempts: p.total_attempts,
+                errors: p.total_errors,
+                successes: p.total_successes,
+                lastPlayed: p.last_played_at,
+                section: p.section,
+                difficulty: p.difficulty,
+                label: p.label,
+                exerciseData: p.exercise_data,
+            };
+        });
+    } else {
+        state.exerciseHistory = {};
     }
 
     saveState();

@@ -151,8 +151,8 @@
                 <span class="menu-label">Sons</span>
             </button>
             <button class="menu-btn" data-section="recompenses" onclick="showSection('recompenses')">
-                <span class="menu-icon">🏆</span>
-                <span class="menu-label">Trophées</span>
+                <span class="menu-icon">📈</span>
+                <span class="menu-label">Évolution</span>
             </button>
         </nav>
 
@@ -219,12 +219,20 @@
             </div>
         </section>
 
-        <!-- SECTION RECOMPENSES -->
+        <!-- SECTION ÉVOLUTION -->
         <section id="section-recompenses" class="game-section hidden">
-            <h2>🏆 Mes Trophées</h2>
+            <h2>📈 Mon Évolution</h2>
+
+            <h3 class="evolution-subtitle">🏆 Mes Trophées</h3>
             <div id="trophees-grid" class="trophees-grid"></div>
+
+            <div class="errors-container">
+                <h3>❌ Mes erreurs</h3>
+                <div id="errors-content"></div>
+            </div>
+
             <div class="stats-container">
-                <h3>Mes statistiques</h3>
+                <h3>📊 Mes statistiques</h3>
                 <div id="stats-content"></div>
             </div>
         </section>
