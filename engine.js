@@ -111,7 +111,9 @@ function trackExerciseResult(section, difficulty, exercise, isCorrect) {
             section: section,
             difficulty: difficulty,
             label: label,
-            exerciseData: section === 'maths' ? { a: exercise.a, b: exercise.b, op: exercise.op } : null,
+            exerciseData: section === 'maths'
+                ? { a: exercise.a, b: exercise.b, op: exercise.op }
+                : { prompt: exercise.prompt, question: exercise.question || null, choices: exercise.choices.slice(), answer: exercise.answer, instruction: exercise.instruction || null },
         };
     }
 
@@ -132,6 +134,7 @@ function trackExerciseResult(section, difficulty, exercise, isCorrect) {
 function selectSmartExercises(allExercises, section, difficulty, count) {
     var errors = [];
     var unseen = [];
+    var corrected = [];
     var learned = [];
 
     allExercises.forEach(function(ex) {
@@ -141,6 +144,8 @@ function selectSmartExercises(allExercises, section, difficulty, count) {
             unseen.push(ex);
         } else if (h.note <= 0 && h.errors > 0) {
             errors.push(ex);
+        } else if (h.note > 0 && h.errors > 0) {
+            corrected.push(ex);
         } else {
             learned.push({ ex: ex, note: h.note, lastPlayed: h.lastPlayed || '' });
         }
@@ -154,6 +159,7 @@ function selectSmartExercises(allExercises, section, difficulty, count) {
     var selected = [];
     var shuffledErrors = shuffle([].concat(errors));
     var shuffledUnseen = shuffle([].concat(unseen));
+    var shuffledCorrected = shuffle([].concat(corrected));
 
     // 1. Errors (up to 2)
     for (var i = 0; i < Math.min(2, shuffledErrors.length) && selected.length < count; i++) {
@@ -170,7 +176,12 @@ function selectSmartExercises(allExercises, section, difficulty, count) {
         selected.push(shuffledErrors[i]);
     }
 
-    // 4. Learned (least mastered first)
+    // 4. Corrected errors (up to 1 random, for reinforcement)
+    for (var i = 0; i < Math.min(1, shuffledCorrected.length) && selected.length < count; i++) {
+        selected.push(shuffledCorrected[i]);
+    }
+
+    // 5. Learned (least mastered first)
     for (var i = 0; i < learned.length && selected.length < count; i++) {
         selected.push(learned[i].ex);
     }
@@ -678,20 +689,35 @@ function showEvolution() {
             return b[1].errors - a[1].errors;
         });
 
+    // Store for onclick handlers
+    window._evolutionErrors = errorEntries;
+
     if (errorEntries.length === 0) {
         errorsDiv.innerHTML = '<p class="no-errors-text">Aucune erreur pour le moment !</p>';
     } else {
+        var pendingCount = errorEntries.filter(function(e) { return e[1].note === 0; }).length;
         var html = '';
-        errorEntries.forEach(function(entry) {
+
+        if (pendingCount > 0) {
+            html += '<button class="replay-all-errors-btn" onclick="replayAllPendingErrors()">Rejouer les erreurs (' + pendingCount + ')</button>';
+        } else {
+            html += '<button class="replay-all-errors-btn replay-corrected-btn" onclick="replayAllCorrectedErrors()">Rejouer les erreurs corrig\u00e9es</button>';
+        }
+
+        errorEntries.forEach(function(entry, index) {
             var h = entry[1];
             var sectionIcon = h.section === 'lecture' ? '\uD83D\uDCD6' : h.section === 'maths' ? '\uD83D\uDD22' : '\uD83D\uDD0A';
             var statusClass = h.note === 0 ? 'error-pending' : 'error-resolved';
             var statusLabel = h.note === 0 ? '\u00c0 retravailler' : 'Corrig\u00e9 \u2713';
+            var actionBtn = h.note === 0
+                ? '<button class="error-action-btn error-replay-btn" onclick="replayErrorExercise(' + index + ')">Rejouer</button>'
+                : '<button class="error-action-btn error-view-btn" onclick="viewExercise(' + index + ')">Voir</button>';
             html += '<div class="error-row ' + statusClass + '">' +
                 '<span class="error-section-icon">' + sectionIcon + '</span>' +
                 '<span class="error-label">' + h.label + '</span>' +
                 '<span class="error-count">' + h.errors + ' err.</span>' +
                 '<span class="error-status">' + statusLabel + '</span>' +
+                actionBtn +
                 '</div>';
         });
         errorsDiv.innerHTML = html;
@@ -737,6 +763,187 @@ function showEvolution() {
             <span class="stat-value">${pendingErrors} / ${totalErrors}</span>
         </div>
     `;
+}
+
+// === REJOUER / VOIR EXERCICES DEPUIS ÉVOLUTION ===
+
+function buildExerciseFromHistory(h) {
+    if (!h.exerciseData) return null;
+    if (h.section === 'maths') {
+        var config = MATHS_DATA[h.difficulty] || MATHS_DATA['facile'];
+        return recreateMathExercise(h.exerciseData.a, h.exerciseData.b, h.exerciseData.op, config);
+    }
+    return {
+        prompt: h.exerciseData.prompt,
+        question: h.exerciseData.question || null,
+        choices: h.exerciseData.choices.slice(),
+        answer: h.exerciseData.answer,
+        instruction: h.exerciseData.instruction || null,
+    };
+}
+
+function replayErrorExercise(index) {
+    var entry = window._evolutionErrors[index];
+    if (!entry) return;
+    var h = entry[1];
+    var ex = buildExerciseFromHistory(h);
+    if (!ex) {
+        startSectionForReplay(h.section, h.difficulty);
+        return;
+    }
+    startReplaySession([ex], h.section, h.difficulty);
+}
+
+function replayAllPendingErrors() {
+    var exercises = [];
+    var section = null;
+    var difficulty = null;
+    window._evolutionErrors.forEach(function(entry) {
+        var h = entry[1];
+        if (h.note !== 0) return;
+        var ex = buildExerciseFromHistory(h);
+        if (ex) {
+            exercises.push({ ex: ex, section: h.section, difficulty: h.difficulty });
+            if (!section) { section = h.section; difficulty = h.difficulty; }
+        }
+    });
+    if (exercises.length === 0) return;
+    var shuffled = shuffle(exercises);
+    var selected = shuffled.slice(0, 5);
+    var firstSection = selected[0].section;
+    var firstDifficulty = selected[0].difficulty;
+    startReplaySession(selected.map(function(e) { return e.ex; }), firstSection, firstDifficulty);
+}
+
+function replayAllCorrectedErrors() {
+    var exercises = [];
+    window._evolutionErrors.forEach(function(entry) {
+        var h = entry[1];
+        if (h.note <= 0) return;
+        var ex = buildExerciseFromHistory(h);
+        if (ex) {
+            exercises.push({ ex: ex, section: h.section, difficulty: h.difficulty });
+        }
+    });
+    if (exercises.length === 0) return;
+    var shuffled = shuffle(exercises);
+    var selected = shuffled.slice(0, 5);
+    var firstSection = selected[0].section;
+    var firstDifficulty = selected[0].difficulty;
+    startReplaySession(selected.map(function(e) { return e.ex; }), firstSection, firstDifficulty);
+}
+
+function startSectionForReplay(section, difficulty) {
+    if (section === 'lecture') {
+        state.lectureDifficulty = difficulty;
+    } else if (section === 'maths') {
+        state.mathsDifficulty = difficulty;
+    } else if (section === 'sons') {
+        state.sonsDifficulty = difficulty;
+    }
+    showSection(section);
+}
+
+function startReplaySession(exercises, section, difficulty) {
+    if (state.pendingTimeout) {
+        clearTimeout(state.pendingTimeout);
+        state.pendingTimeout = null;
+    }
+    state.isAnswering = false;
+    state.currentSection = section;
+    state.currentExercises = exercises;
+    state.currentIndex = 0;
+    state.correctCount = 0;
+
+    document.querySelectorAll('.game-section').forEach(function(s) { s.classList.add('hidden'); });
+    document.querySelectorAll('.menu-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.body.classList.add('in-game');
+
+    if (section === 'lecture') {
+        state.lectureDifficulty = difficulty;
+        document.getElementById('section-lecture').classList.remove('hidden');
+        document.querySelector('[data-section="lecture"]').classList.add('active');
+        hideNextButton('lecture-next');
+        document.getElementById('lecture-choices').innerHTML = '';
+        document.getElementById('lecture-feedback').textContent = '';
+        document.getElementById('lecture-feedback').className = 'feedback';
+        updateProgress('lecture');
+        showLectureExercise();
+    } else if (section === 'maths') {
+        state.mathsDifficulty = difficulty;
+        document.getElementById('section-maths').classList.remove('hidden');
+        document.querySelector('[data-section="maths"]').classList.add('active');
+        hideNextButton('maths-next');
+        document.getElementById('maths-choices').innerHTML = '';
+        document.getElementById('maths-feedback').textContent = '';
+        document.getElementById('maths-feedback').className = 'feedback';
+        updateProgress('maths');
+        showMathsExercise();
+    } else if (section === 'sons') {
+        state.sonsDifficulty = difficulty;
+        document.getElementById('section-sons').classList.remove('hidden');
+        document.querySelector('[data-section="sons"]').classList.add('active');
+        hideNextButton('sons-next');
+        document.getElementById('sons-choices').innerHTML = '';
+        document.getElementById('sons-feedback').textContent = '';
+        document.getElementById('sons-feedback').className = 'feedback';
+        updateProgress('sons');
+        showSonsExercise();
+    }
+}
+
+function viewExercise(index) {
+    var entry = window._evolutionErrors[index];
+    if (!entry) return;
+    var h = entry[1];
+    var modal = document.getElementById('exercise-view-modal');
+    var content = document.getElementById('exercise-view-content');
+
+    var sectionLabel = h.section === 'lecture' ? 'Lecture' : h.section === 'maths' ? 'Maths' : 'Sons';
+    var html = '<div class="exercise-view-header">' +
+        '<span class="exercise-view-section">' + sectionLabel + ' - ' + h.difficulty + '</span>' +
+        '</div>';
+
+    if (h.exerciseData && h.section !== 'maths') {
+        var isStory = h.difficulty === 'histoires';
+        html += '<div class="exercise-view-prompt' + (isStory ? ' story-text' : '') + '">' + h.exerciseData.prompt + '</div>';
+        if (h.exerciseData.question) {
+            html += '<div class="exercise-view-question">' + h.exerciseData.question + '</div>';
+        }
+        if (h.exerciseData.instruction) {
+            html += '<div class="exercise-view-question">' + h.exerciseData.instruction + '</div>';
+        }
+        html += '<div class="exercise-view-choices">';
+        h.exerciseData.choices.forEach(function(choice, i) {
+            var isCorrect = i === h.exerciseData.answer;
+            html += '<div class="exercise-view-choice' + (isCorrect ? ' correct' : '') + '">' +
+                choice + (isCorrect ? ' \u2705' : '') + '</div>';
+        });
+        html += '</div>';
+    } else if (h.exerciseData && h.section === 'maths') {
+        var a = h.exerciseData.a, b = h.exerciseData.b, op = h.exerciseData.op;
+        var result;
+        if (op === '+') result = a + b;
+        else if (op === '-') result = a - b;
+        else result = a * b;
+        html += '<div class="exercise-view-prompt">' + a + ' ' + op + ' ' + b + ' = ?</div>';
+        html += '<div class="exercise-view-answer">R\u00e9ponse : ' + result + '</div>';
+    } else {
+        html += '<div class="exercise-view-prompt">' + h.label + '</div>';
+    }
+
+    html += '<div class="exercise-view-stats">' +
+        '<span>Tentatives : ' + h.attempts + '</span>' +
+        '<span>Erreurs : ' + h.errors + '</span>' +
+        '<span>R\u00e9ussites : ' + h.successes + '</span>' +
+        '</div>';
+
+    content.innerHTML = html;
+    modal.classList.remove('hidden');
+}
+
+function closeExerciseViewModal() {
+    document.getElementById('exercise-view-modal').classList.add('hidden');
 }
 
 // === BOUTON SUIVANT AVEC TIMER CIRCULAIRE ===

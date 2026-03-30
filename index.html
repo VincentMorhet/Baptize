@@ -251,6 +251,14 @@
         </div>
     </div>
 
+    <!-- Modal de consultation d'exercice -->
+    <div id="exercise-view-modal" class="modal hidden" onclick="if(event.target===this)closeExerciseViewModal()">
+        <div class="modal-content exercise-view-modal-content">
+            <div id="exercise-view-content"></div>
+            <button class="btn-continue" onclick="closeExerciseViewModal()">Fermer</button>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="supabase.js"></script>
     <script src="engine.js"></script>
