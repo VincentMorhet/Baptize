@@ -9,6 +9,7 @@ let state = {
         perfectSeries: 0,
     },
     trophees: [],
+    exerciseHistory: {},
     currentSection: null,
     lectureDifficulty: 'syllabes',
     mathsDifficulty: 'facile',
@@ -27,6 +28,7 @@ function saveState() {
         stars: state.stars,
         stats: state.stats,
         trophees: state.trophees,
+        exerciseHistory: state.exerciseHistory,
     };
     localStorage.setItem('mentalis_state', JSON.stringify(toSave));
     if (typeof syncToCloud === 'function') syncToCloud();
@@ -45,6 +47,7 @@ function loadState() {
         state.stars = data.stars || 0;
         state.stats = data.stats || { lecture: 0, maths: 0, sons: 0, perfectSeries: 0 };
         state.trophees = data.trophees || [];
+        state.exerciseHistory = data.exerciseHistory || {};
     }
     updateStarsDisplay();
 }
@@ -69,7 +72,132 @@ function showSection(section) {
     if (section === 'lecture') startLecture();
     else if (section === 'maths') startMaths();
     else if (section === 'sons') startSons();
-    else if (section === 'recompenses') showTrophees();
+    else if (section === 'recompenses') showEvolution();
+}
+
+// === SUIVI DES EXERCICES ===
+
+function getExerciseKey(section, difficulty, exercise) {
+    if (section === 'maths') {
+        return 'maths_' + difficulty + '_' + exercise.a + '_' + exercise.op + '_' + exercise.b;
+    }
+    var answer = exercise.choices[exercise.answer];
+    return section + '_' + difficulty + '_' + exercise.prompt + '_' + answer;
+}
+
+function getExerciseLabel(section, difficulty, exercise) {
+    if (section === 'maths') {
+        var result;
+        if (exercise.op === '+') result = exercise.a + exercise.b;
+        else if (exercise.op === '-') result = exercise.a - exercise.b;
+        else result = exercise.a * exercise.b;
+        return exercise.a + ' ' + exercise.op + ' ' + exercise.b + ' = ' + result;
+    }
+    return exercise.prompt + ' \u2192 ' + exercise.choices[exercise.answer];
+}
+
+function trackExerciseResult(section, difficulty, exercise, isCorrect) {
+    var key = getExerciseKey(section, difficulty, exercise);
+    var label = getExerciseLabel(section, difficulty, exercise);
+    var now = new Date().toISOString();
+
+    if (!state.exerciseHistory[key]) {
+        state.exerciseHistory[key] = {
+            note: 0,
+            attempts: 0,
+            errors: 0,
+            successes: 0,
+            lastPlayed: now,
+            section: section,
+            difficulty: difficulty,
+            label: label,
+            exerciseData: section === 'maths' ? { a: exercise.a, b: exercise.b, op: exercise.op } : null,
+        };
+    }
+
+    var h = state.exerciseHistory[key];
+    h.attempts++;
+    h.lastPlayed = now;
+    h.label = label;
+
+    if (isCorrect) {
+        h.successes++;
+        h.note = Math.min((h.note || 0) + 1, 5);
+    } else {
+        h.errors++;
+        h.note = 0;
+    }
+}
+
+function selectSmartExercises(allExercises, section, difficulty, count) {
+    var errors = [];
+    var unseen = [];
+    var learned = [];
+
+    allExercises.forEach(function(ex) {
+        var key = getExerciseKey(section, difficulty, ex);
+        var h = state.exerciseHistory[key];
+        if (!h) {
+            unseen.push(ex);
+        } else if (h.note <= 0 && h.errors > 0) {
+            errors.push(ex);
+        } else {
+            learned.push({ ex: ex, note: h.note, lastPlayed: h.lastPlayed || '' });
+        }
+    });
+
+    learned.sort(function(a, b) {
+        if (a.note !== b.note) return a.note - b.note;
+        return (a.lastPlayed < b.lastPlayed) ? -1 : 1;
+    });
+
+    var selected = [];
+    var shuffledErrors = shuffle([].concat(errors));
+    var shuffledUnseen = shuffle([].concat(unseen));
+
+    // 1. Errors (up to 2)
+    for (var i = 0; i < Math.min(2, shuffledErrors.length) && selected.length < count; i++) {
+        selected.push(shuffledErrors[i]);
+    }
+
+    // 2. Unseen exercises
+    for (var i = 0; i < shuffledUnseen.length && selected.length < count; i++) {
+        selected.push(shuffledUnseen[i]);
+    }
+
+    // 3. Remaining errors
+    for (var i = 2; i < shuffledErrors.length && selected.length < count; i++) {
+        selected.push(shuffledErrors[i]);
+    }
+
+    // 4. Learned (least mastered first)
+    for (var i = 0; i < learned.length && selected.length < count; i++) {
+        selected.push(learned[i].ex);
+    }
+
+    return shuffle(selected.slice(0, count));
+}
+
+function recreateMathExercise(a, b, op, config) {
+    var answer;
+    if (op === '+') answer = a + b;
+    else if (op === '-') answer = a - b;
+    else answer = a * b;
+
+    var promptHtml = colorizeNumber(a) + ' <span class="math-op">' + op + '</span> ' + colorizeNumber(b) + ' <span class="math-op">=</span> <span class="math-op">?</span>';
+
+    var choices = [answer];
+    var range = config.showHands ? 3 : 5;
+    while (choices.length < 4) {
+        var wrong = answer + randomInt(-range, range);
+        if (wrong !== answer && wrong >= 0 && !choices.includes(wrong)) {
+            choices.push(wrong);
+        }
+    }
+    choices = shuffle(choices);
+    var correctIndex = choices.indexOf(answer);
+
+    return { promptHtml: promptHtml, choices: choices, answer: correctIndex, a: a, b: b, op: op, showHands: !!config.showHands };
 }
 
 // === LECTURE ===
@@ -93,7 +221,7 @@ function startLecture() {
     document.getElementById('lecture-feedback').className = 'feedback';
 
     const data = LECTURE_DATA[state.lectureDifficulty];
-    state.currentExercises = shuffle([...data.exercises]).slice(0, 5);
+    state.currentExercises = selectSmartExercises(data.exercises, 'lecture', state.lectureDifficulty, 5);
     state.currentIndex = 0;
     state.correctCount = 0;
     updateProgress('lecture');
@@ -140,6 +268,7 @@ function answerLecture(chosen, correct, btn) {
         state.correctCount++;
         state.stars++;
         state.stats.lecture++;
+        trackExerciseResult('lecture', state.lectureDifficulty, state.currentExercises[state.currentIndex], true);
         updateStarsDisplay();
         saveState();
     } else {
@@ -148,6 +277,7 @@ function answerLecture(chosen, correct, btn) {
         feedback.textContent = randomItem(ENCOURAGEMENTS_ERROR);
         feedback.className = 'feedback error';
         state.stats.lecture++;
+        trackExerciseResult('lecture', state.lectureDifficulty, state.currentExercises[state.currentIndex], false);
         saveState();
     }
 
@@ -179,7 +309,22 @@ function startMaths() {
     state.currentExercises = [];
     const config = MATHS_DATA[state.mathsDifficulty];
 
-    for (let i = 0; i < 5; i++) {
+    // Include error exercises to retry
+    var mathsErrors = [];
+    for (var key in state.exerciseHistory) {
+        var h = state.exerciseHistory[key];
+        if (h.section === 'maths' && h.difficulty === state.mathsDifficulty && h.note <= 0 && h.errors > 0 && h.exerciseData) {
+            mathsErrors.push(h.exerciseData);
+        }
+    }
+    var shuffledMathsErrors = shuffle([].concat(mathsErrors));
+    var errorCount = Math.min(2, shuffledMathsErrors.length);
+    for (var i = 0; i < errorCount; i++) {
+        var ed = shuffledMathsErrors[i];
+        state.currentExercises.push(recreateMathExercise(ed.a, ed.b, ed.op, config));
+    }
+
+    for (let i = state.currentExercises.length; i < 5; i++) {
         state.currentExercises.push(generateMathExercise(config));
     }
 
@@ -231,7 +376,7 @@ function generateMathExercise(config) {
     choices = shuffle(choices);
     const correctIndex = choices.indexOf(answer);
 
-    return { promptHtml, choices, answer: correctIndex, a, b, showHands: !!config.showHands };
+    return { promptHtml, choices, answer: correctIndex, a, b, op, showHands: !!config.showHands };
 }
 
 function showMathsExercise() {
@@ -292,6 +437,7 @@ function answerMaths(chosen, correct, btn) {
         state.correctCount++;
         state.stars++;
         state.stats.maths++;
+        trackExerciseResult('maths', state.mathsDifficulty, state.currentExercises[state.currentIndex], true);
         updateStarsDisplay();
         saveState();
     } else {
@@ -300,6 +446,7 @@ function answerMaths(chosen, correct, btn) {
         feedback.textContent = randomItem(ENCOURAGEMENTS_ERROR);
         feedback.className = 'feedback error';
         state.stats.maths++;
+        trackExerciseResult('maths', state.mathsDifficulty, state.currentExercises[state.currentIndex], false);
         saveState();
     }
 
@@ -338,7 +485,7 @@ function startSons() {
     document.getElementById('sons-feedback').className = 'feedback';
 
     const data = SONS_DATA[state.sonsDifficulty];
-    state.currentExercises = shuffle([...data.exercises]).slice(0, 5);
+    state.currentExercises = selectSmartExercises(data.exercises, 'sons', state.sonsDifficulty, 5);
     state.currentIndex = 0;
     state.correctCount = 0;
     updateProgress('sons');
@@ -394,6 +541,7 @@ function answerSons(chosen, correct, btn) {
         state.correctCount++;
         state.stars++;
         state.stats.sons++;
+        trackExerciseResult('sons', state.sonsDifficulty, state.currentExercises[state.currentIndex], true);
         updateStarsDisplay();
         saveState();
     } else {
@@ -402,6 +550,7 @@ function answerSons(chosen, correct, btn) {
         feedback.textContent = randomItem(ENCOURAGEMENTS_ERROR);
         feedback.className = 'feedback error';
         state.stats.sons++;
+        trackExerciseResult('sons', state.sonsDifficulty, state.currentExercises[state.currentIndex], false);
         saveState();
     }
 
@@ -485,9 +634,10 @@ function checkTrophees() {
     if (newTrophee) saveState();
 }
 
-function showTrophees() {
+function showEvolution() {
     checkTrophees();
 
+    // Troph\u00e9es
     const grid = document.getElementById('trophees-grid');
     grid.innerHTML = '';
 
@@ -502,7 +652,41 @@ function showTrophees() {
         grid.appendChild(card);
     });
 
+    // Erreurs
+    const errorsDiv = document.getElementById('errors-content');
+    const errorEntries = Object.entries(state.exerciseHistory)
+        .filter(function(entry) { return entry[1].errors > 0; })
+        .sort(function(a, b) {
+            if (a[1].note === 0 && b[1].note > 0) return -1;
+            if (a[1].note > 0 && b[1].note === 0) return 1;
+            return b[1].errors - a[1].errors;
+        });
+
+    if (errorEntries.length === 0) {
+        errorsDiv.innerHTML = '<p class="no-errors-text">Aucune erreur pour le moment !</p>';
+    } else {
+        var html = '';
+        errorEntries.forEach(function(entry) {
+            var h = entry[1];
+            var sectionIcon = h.section === 'lecture' ? '\uD83D\uDCD6' : h.section === 'maths' ? '\uD83D\uDD22' : '\uD83D\uDD0A';
+            var statusClass = h.note === 0 ? 'error-pending' : 'error-resolved';
+            var statusLabel = h.note === 0 ? '\u00c0 retravailler' : 'Corrig\u00e9 \u2713';
+            html += '<div class="error-row ' + statusClass + '">' +
+                '<span class="error-section-icon">' + sectionIcon + '</span>' +
+                '<span class="error-label">' + h.label + '</span>' +
+                '<span class="error-count">' + h.errors + ' err.</span>' +
+                '<span class="error-status">' + statusLabel + '</span>' +
+                '</div>';
+        });
+        errorsDiv.innerHTML = html;
+    }
+
+    // Statistiques
     const statsDiv = document.getElementById('stats-content');
+    const totalExercises = Object.keys(state.exerciseHistory).length;
+    const totalErrors = Object.values(state.exerciseHistory).filter(function(h) { return h.errors > 0; }).length;
+    const pendingErrors = Object.values(state.exerciseHistory).filter(function(h) { return h.note === 0 && h.errors > 0; }).length;
+
     statsDiv.innerHTML = `
         <div class="stat-row">
             <span class="stat-label">\u00c9toiles gagn\u00e9es</span>
@@ -527,6 +711,14 @@ function showTrophees() {
         <div class="stat-row">
             <span class="stat-label">Troph\u00e9es d\u00e9bloqu\u00e9s</span>
             <span class="stat-value">${state.trophees.length}/${TROPHEES.length}</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Exercices travaill\u00e9s</span>
+            <span class="stat-value">${totalExercises}</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Erreurs \u00e0 corriger</span>
+            <span class="stat-value">${pendingErrors} / ${totalErrors}</span>
         </div>
     `;
 }

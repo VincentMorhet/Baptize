@@ -119,6 +119,7 @@ async function showChildSelector() {
 
 async function selectChild(child) {
     currentChild = child;
+    await loadExerciseData();
     await syncFromCloud();
     enterApp();
 }
@@ -305,6 +306,7 @@ function closeDeleteModal() {
 }
 
 async function confirmDeleteChild() {
+    await supabaseClient.from('exercise_progress').delete().eq('child_id', childToEdit.id);
     await supabaseClient.from('trophies').delete().eq('child_id', childToEdit.id);
     await supabaseClient.from('scores').delete().eq('child_id', childToEdit.id);
     const { error } = await supabaseClient.from('children').delete().eq('id', childToEdit.id);
@@ -345,7 +347,7 @@ function skipAuth() {
     currentChild = null;
     hideAllScreens();
     document.getElementById('app').classList.remove('hidden');
-    loadState();
+    loadExerciseData().catch(function() {}).finally(function() { loadState(); });
 }
 
 async function logoutUser() {
@@ -377,6 +379,30 @@ async function syncToCloud() {
             unlocked_at: new Date().toISOString(),
         }, { onConflict: 'child_id,trophy_id' });
     }
+
+    // Sync exercise progress
+    var progressRows = [];
+    for (var key in state.exerciseHistory) {
+        var h = state.exerciseHistory[key];
+        progressRows.push({
+            child_id: currentChild.id,
+            exercise_key: key,
+            section: h.section,
+            difficulty: h.difficulty,
+            note: h.note,
+            total_attempts: h.attempts,
+            total_errors: h.errors,
+            total_successes: h.successes,
+            label: h.label,
+            exercise_data: h.exerciseData,
+            last_played_at: h.lastPlayed,
+        });
+    }
+    if (progressRows.length > 0) {
+        await supabaseClient.from('exercise_progress').upsert(progressRows, {
+            onConflict: 'child_id,exercise_key'
+        });
+    }
 }
 
 async function syncFromCloud() {
@@ -398,6 +424,7 @@ async function syncFromCloud() {
         state.stars = 0;
         state.stats = { lecture: 0, maths: 0, sons: 0, perfectSeries: 0 };
         state.trophees = [];
+        state.exerciseHistory = {};
     }
 
     const { data: trophyData } = await supabaseClient
@@ -409,8 +436,101 @@ async function syncFromCloud() {
         state.trophees = trophyData.map(t => t.trophy_id);
     }
 
+    // Load exercise progress
+    const { data: progressData } = await supabaseClient
+        .from('exercise_progress')
+        .select('*')
+        .eq('child_id', currentChild.id);
+
+    if (progressData && progressData.length > 0) {
+        state.exerciseHistory = {};
+        progressData.forEach(function(p) {
+            state.exerciseHistory[p.exercise_key] = {
+                note: p.note,
+                attempts: p.total_attempts,
+                errors: p.total_errors,
+                successes: p.total_successes,
+                lastPlayed: p.last_played_at,
+                section: p.section,
+                difficulty: p.difficulty,
+                label: p.label,
+                exerciseData: p.exercise_data,
+            };
+        });
+    } else {
+        state.exerciseHistory = {};
+    }
+
     saveState();
     updateStarsDisplay();
+}
+
+// === CHARGEMENT DES EXERCICES DEPUIS SUPABASE ===
+
+async function loadExerciseData() {
+    if (!supabaseClient) return;
+
+    try {
+        // Charger tous les exercices (lecture + sons)
+        var { data: exercises, error: exError } = await supabaseClient
+            .from('exercises')
+            .select('*')
+            .order('sort_order', { ascending: true });
+
+        if (!exError && exercises && exercises.length > 0) {
+            var newLecture = {};
+            var newSons = {};
+
+            exercises.forEach(function(ex) {
+                var target = ex.section === 'lecture' ? newLecture : newSons;
+                if (!target[ex.difficulty]) {
+                    target[ex.difficulty] = { exercises: [] };
+                }
+                var exercise = {
+                    prompt: ex.prompt,
+                    choices: ex.choices,
+                    answer: ex.answer,
+                };
+                if (ex.question) exercise.question = ex.question;
+                if (ex.instruction) exercise.instruction = ex.instruction;
+                if (ex.speak) exercise.speak = ex.speak;
+
+                target[ex.difficulty].exercises.push(exercise);
+            });
+
+            if (Object.keys(newLecture).length > 0) {
+                // Remplacer les clés de LECTURE_DATA
+                Object.keys(LECTURE_DATA).forEach(function(k) { delete LECTURE_DATA[k]; });
+                Object.assign(LECTURE_DATA, newLecture);
+            }
+            if (Object.keys(newSons).length > 0) {
+                Object.keys(SONS_DATA).forEach(function(k) { delete SONS_DATA[k]; });
+                Object.assign(SONS_DATA, newSons);
+            }
+        }
+
+        // Charger les trophées
+        var { data: trophyDefs, error: trError } = await supabaseClient
+            .from('trophy_definitions')
+            .select('*')
+            .order('sort_order', { ascending: true });
+
+        if (!trError && trophyDefs && trophyDefs.length > 0) {
+            TROPHEES.length = 0;
+            trophyDefs.forEach(function(t) {
+                TROPHEES.push({
+                    id: t.id,
+                    name: t.name,
+                    icon: t.icon,
+                    condition: t.condition,
+                    threshold: t.threshold,
+                    type: t.type,
+                });
+            });
+        }
+    } catch (e) {
+        console.warn('Chargement exercices depuis le cloud impossible, utilisation des données locales.', e);
+    }
 }
 
 // === AUTO-LOGIN AU CHARGEMENT ===
