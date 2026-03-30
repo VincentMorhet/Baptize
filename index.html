@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentalis - Apprends en t'amusant !</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="vendor/supabase.min.js"></script>
 </head>
 <body>
     <!-- Écran de connexion / inscription -->
@@ -29,7 +29,6 @@
 
                 <!-- Inscription -->
                 <div id="tab-register" class="auth-tab-content hidden">
-                    <input type="text" id="register-name" placeholder="Prénom de l'enfant" autocomplete="given-name">
                     <input type="email" id="register-email" placeholder="Email du parent" autocomplete="email">
                     <input type="password" id="register-password" placeholder="Mot de passe (min. 6 caractères)" autocomplete="new-password">
                     <button class="auth-btn" onclick="registerUser()">S'inscrire</button>
@@ -43,12 +42,37 @@
         </div>
     </div>
 
+    <!-- Écran de sélection d'enfant -->
+    <div id="child-screen" class="hidden">
+        <div class="auth-container">
+            <h1>🎓 Mentalis</h1>
+            <p class="auth-subtitle">Qui va jouer ?</p>
+
+            <div id="children-list" class="children-list"></div>
+
+            <div id="add-child-form" class="add-child-form">
+                <input type="text" id="new-child-name" placeholder="Prénom de l'enfant" maxlength="30">
+                <button class="auth-btn" onclick="addChild()">Ajouter un enfant</button>
+            </div>
+
+            <div id="child-error" class="auth-error hidden"></div>
+
+            <button class="auth-skip" onclick="logoutUser()">Se déconnecter</button>
+        </div>
+    </div>
+
     <div id="app" class="hidden">
         <header>
-            <h1>🎓 Mentalis</h1>
-            <p class="subtitle">Apprends en t'amusant !</p>
-            <div id="stars-display">
-                <span id="stars-count">0</span> ⭐
+            <div class="header-top">
+                <h1>🎓 Mentalis</h1>
+                <div id="stars-display">
+                    <span id="stars-count">0</span> ⭐
+                </div>
+            </div>
+            <div id="child-bar" class="child-bar hidden">
+                <span id="child-name-display" class="child-name"></span>
+                <button class="child-switch-btn" onclick="showChildSelector()">Changer</button>
+                <button class="child-logout-btn" onclick="logoutUser()">Quitter</button>
             </div>
         </header>
 
@@ -156,7 +180,8 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="data.js"></script>
     <script src="supabase.js"></script>
+    <script src="engine.js"></script>
 </body>
 </html>

@@ -132,30 +132,133 @@
     font-size: 0.9rem;
 }
 
-/* User bar when logged in */
-.user-bar {
+/* Child selector screen */
+#child-screen {
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 6px;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.8);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
 }
 
-.user-bar button {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
+.children-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.child-select-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.child-select-btn:hover {
+    border-color: #667eea;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.child-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
-    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.child-btn-name {
+    flex: 1;
+}
+
+.no-children {
+    color: #888;
+    font-size: 0.95rem;
+    padding: 16px 0;
+}
+
+.add-child-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.add-child-form input {
+    padding: 14px 16px;
+    border: 2px solid #e0e0e0;
     border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.add-child-form input:focus {
+    border-color: #667eea;
+}
+
+/* Child bar in header */
+.child-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}
+
+.child-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+.child-switch-btn,
+.child-logout-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 5px 12px;
+    border-radius: 14px;
     font-size: 0.75rem;
     cursor: pointer;
     transition: background 0.2s;
 }
 
-.user-bar button:hover {
+.child-switch-btn:hover,
+.child-logout-btn:hover {
     background: rgba(255, 255, 255, 0.3);
+}
+
+/* Header top row */
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
 }
 
 /* === RESET & BASE === */
@@ -199,9 +302,6 @@ header h1 {
 }
 
 #stars-display {
-    position: absolute;
-    top: 20px;
-    right: 0;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     padding: 8px 16px;
@@ -806,9 +906,8 @@ body.in-game .speak-btn {
     }
 
     #stars-display {
-        position: static;
-        display: inline-block;
-        margin-top: 8px;
+        padding: 6px 12px;
+        font-size: 1rem;
     }
 
     .big-text {
@@ -857,12 +956,11 @@ body.in-game header h1 {
     font-size: 1.2rem;
 }
 
-body.in-game .subtitle {
+body.in-game .child-bar {
     display: none;
 }
 
 body.in-game #stars-display {
-    position: static;
     padding: 4px 10px;
     font-size: 0.9rem;
 }
