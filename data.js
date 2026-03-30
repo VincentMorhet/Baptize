@@ -29,6 +29,20 @@ const LECTURE_DATA = {
             { prompt: "🐟", question: "Quel est ce mot ?", choices: ["poisson", "baleine", "dauphin", "crabe"], answer: 0 },
         ]
     },
+    histoires: {
+        exercises: [
+            { prompt: "Le chat dort sur le canapé. Maman ouvre la porte. Le chat se réveille et court vers elle.", question: "Où dort le chat ?", choices: ["sur le lit", "sur le canapé", "par terre", "sur la table"], answer: 1 },
+            { prompt: "Tom met ses bottes. Il prend son parapluie. Il sort sous la pluie.", question: "Quel temps fait-il ?", choices: ["il neige", "il fait soleil", "il pleut", "il y a du vent"], answer: 2 },
+            { prompt: "Léa cueille une pomme dans le jardin. Elle la lave. Elle la mange avec plaisir.", question: "Que fait Léa avec la pomme ?", choices: ["elle la donne", "elle la mange", "elle la jette", "elle la cache"], answer: 1 },
+            { prompt: "Le chien joue dans le parc. Il court après un ballon. Il est très content.", question: "Après quoi court le chien ?", choices: ["un chat", "un oiseau", "un ballon", "un os"], answer: 2 },
+            { prompt: "Il fait nuit. Les étoiles brillent dans le ciel. Hugo va au lit.", question: "Quand se passe l'histoire ?", choices: ["le matin", "le midi", "l'après-midi", "la nuit"], answer: 3 },
+            { prompt: "Papa prépare un gâteau. Il casse deux œufs. Il met du chocolat.", question: "Que prépare papa ?", choices: ["une soupe", "un gâteau", "une salade", "un sandwich"], answer: 1 },
+            { prompt: "Marie dessine un soleil. Elle prend des crayons jaunes. Son dessin est très joli.", question: "Que dessine Marie ?", choices: ["une fleur", "une maison", "un soleil", "un arbre"], answer: 2 },
+            { prompt: "Le bus arrive à l'école. Les enfants descendent. Ils vont dans la classe.", question: "Où vont les enfants ?", choices: ["au parc", "à la maison", "dans la classe", "au magasin"], answer: 2 },
+            { prompt: "Mamie tricote une écharpe. Elle est rouge et douce. C'est un cadeau pour Léo.", question: "Pour qui est l'écharpe ?", choices: ["pour maman", "pour Léo", "pour mamie", "pour papa"], answer: 1 },
+            { prompt: "Le petit oiseau est tombé du nid. Une fille le trouve. Elle le remet dans l'arbre.", question: "Où la fille remet l'oiseau ?", choices: ["dans une cage", "dans l'arbre", "dans la maison", "dans le jardin"], answer: 1 },
+        ]
+    },
     phrases: {
         exercises: [
             { prompt: "Le chat dort sur le ___.", question: "Quel mot complète la phrase ?", choices: ["canapé", "ciel", "eau", "vent"], answer: 0 },

@@ -662,6 +662,14 @@ header h1 {
     line-height: 1.3;
 }
 
+.big-text.story-text {
+    font-size: 1.15rem;
+    font-weight: normal;
+    text-align: left;
+    line-height: 1.7;
+    padding: 20px 24px;
+}
+
 /* === BOUTON HAUT-PARLEUR === */
 .speak-btn {
     display: inline-flex;
@@ -1266,6 +1274,14 @@ body.in-game .big-text {
     padding: 12px;
     margin-bottom: 10px;
     min-height: 56px;
+}
+
+body.in-game .big-text.story-text {
+    font-size: 1.05rem;
+    font-weight: normal;
+    text-align: left;
+    line-height: 1.6;
+    min-height: auto;
 }
 
 body.in-game .choices-grid {
