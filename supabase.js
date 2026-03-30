@@ -119,6 +119,7 @@ async function showChildSelector() {
 
 async function selectChild(child) {
     currentChild = child;
+    await loadExerciseData();
     await syncFromCloud();
     enterApp();
 }
@@ -346,7 +347,7 @@ function skipAuth() {
     currentChild = null;
     hideAllScreens();
     document.getElementById('app').classList.remove('hidden');
-    loadState();
+    loadExerciseData().catch(function() {}).finally(function() { loadState(); });
 }
 
 async function logoutUser() {
@@ -462,6 +463,74 @@ async function syncFromCloud() {
 
     saveState();
     updateStarsDisplay();
+}
+
+// === CHARGEMENT DES EXERCICES DEPUIS SUPABASE ===
+
+async function loadExerciseData() {
+    if (!supabaseClient) return;
+
+    try {
+        // Charger tous les exercices (lecture + sons)
+        var { data: exercises, error: exError } = await supabaseClient
+            .from('exercises')
+            .select('*')
+            .order('sort_order', { ascending: true });
+
+        if (!exError && exercises && exercises.length > 0) {
+            var newLecture = {};
+            var newSons = {};
+
+            exercises.forEach(function(ex) {
+                var target = ex.section === 'lecture' ? newLecture : newSons;
+                if (!target[ex.difficulty]) {
+                    target[ex.difficulty] = { exercises: [] };
+                }
+                var exercise = {
+                    prompt: ex.prompt,
+                    choices: ex.choices,
+                    answer: ex.answer,
+                };
+                if (ex.question) exercise.question = ex.question;
+                if (ex.instruction) exercise.instruction = ex.instruction;
+                if (ex.speak) exercise.speak = ex.speak;
+
+                target[ex.difficulty].exercises.push(exercise);
+            });
+
+            if (Object.keys(newLecture).length > 0) {
+                // Remplacer les clés de LECTURE_DATA
+                Object.keys(LECTURE_DATA).forEach(function(k) { delete LECTURE_DATA[k]; });
+                Object.assign(LECTURE_DATA, newLecture);
+            }
+            if (Object.keys(newSons).length > 0) {
+                Object.keys(SONS_DATA).forEach(function(k) { delete SONS_DATA[k]; });
+                Object.assign(SONS_DATA, newSons);
+            }
+        }
+
+        // Charger les trophées
+        var { data: trophyDefs, error: trError } = await supabaseClient
+            .from('trophy_definitions')
+            .select('*')
+            .order('sort_order', { ascending: true });
+
+        if (!trError && trophyDefs && trophyDefs.length > 0) {
+            TROPHEES.length = 0;
+            trophyDefs.forEach(function(t) {
+                TROPHEES.push({
+                    id: t.id,
+                    name: t.name,
+                    icon: t.icon,
+                    condition: t.condition,
+                    threshold: t.threshold,
+                    type: t.type,
+                });
+            });
+        }
+    } catch (e) {
+        console.warn('Chargement exercices depuis le cloud impossible, utilisation des données locales.', e);
+    }
 }
 
 // === AUTO-LOGIN AU CHARGEMENT ===
