@@ -268,6 +268,16 @@ function showLectureExercise() {
     }
 
     const ex = state.currentExercises[state.currentIndex];
+
+    const instructionTexts = {
+        syllabes: 'Lis la syllabe puis choisis le mot qui commence par cette syllabe.',
+        mots: 'Regarde l\'image puis choisis le mot qui correspond.',
+        phrases: 'Lis la phrase puis choisis le mot qui la complète.',
+        histoires: 'Lis l\'histoire puis réponds à la question.'
+    };
+    document.getElementById('lecture-exercise-instruction').textContent =
+        instructionTexts[state.lectureDifficulty] || '';
+
     const promptDiv = document.getElementById('lecture-prompt');
     const questionDiv = document.getElementById('lecture-question');
     promptDiv.textContent = ex.prompt;
@@ -483,6 +493,15 @@ function showMathsExercise() {
         return;
     }
 
+    const mathsInstructionTexts = {
+        doigts: 'Compte les points de chaque groupe puis trouve le résultat.',
+        facile: 'Calcule le résultat de l\'opération puis choisis la bonne réponse.',
+        moyen: 'Calcule le résultat de l\'opération puis choisis la bonne réponse.',
+        difficile: 'Calcule le résultat de l\'opération puis choisis la bonne réponse.'
+    };
+    document.getElementById('maths-exercise-instruction').textContent =
+        mathsInstructionTexts[state.mathsDifficulty] || '';
+
     document.getElementById('maths-prompt').innerHTML = ex.promptHtml;
     document.getElementById('maths-feedback').textContent = '';
     document.getElementById('maths-feedback').className = 'feedback';
@@ -521,6 +540,8 @@ function showMathsExercise() {
 function showDecompositionExercise(ex) {
     document.getElementById('maths-feedback').textContent = '';
     document.getElementById('maths-feedback').className = 'feedback';
+    document.getElementById('maths-exercise-instruction').textContent =
+        'Décompose l\'opération étape par étape pour trouver le résultat.';
     const handsDiv = document.getElementById('maths-hands');
     const choicesDiv = document.getElementById('maths-choices');
     choicesDiv.innerHTML = '';
@@ -700,6 +721,14 @@ function showSonsExercise() {
     }
 
     const ex = state.currentExercises[state.currentIndex];
+
+    const sonsInstructionTexts = {
+        'sons-simples': 'Écoute le son puis choisis le mot qui le contient.',
+        'graphemes': 'Lis le groupe de lettres puis choisis le mot qui le contient.',
+        'confusions': 'Regarde bien les lettres puis choisis la bonne réponse.'
+    };
+    document.getElementById('sons-exercise-instruction').textContent =
+        sonsInstructionTexts[state.sonsDifficulty] || '';
 
     const promptDiv = document.getElementById('sons-prompt');
     if (ex.speak) {
