@@ -278,6 +278,11 @@ function showLectureExercise() {
         promptDiv.classList.remove('story-text');
         questionDiv.classList.remove('story-question');
     }
+    if (state.lectureDifficulty === 'mots') {
+        promptDiv.classList.add('mots-prompt');
+    } else {
+        promptDiv.classList.remove('mots-prompt');
+    }
     if (ex.question) {
         questionDiv.textContent = ex.question;
         questionDiv.classList.remove('hidden');
@@ -292,11 +297,19 @@ function showLectureExercise() {
     choicesDiv.innerHTML = '';
     state.isAnswering = false;
 
-    ex.choices.forEach((choice, i) => {
+    // Shuffle choices randomly so answers aren't always in the same position
+    const indices = ex.choices.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    const shuffledCorrect = indices.indexOf(ex.answer);
+
+    indices.forEach((origIndex) => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
-        btn.textContent = choice;
-        btn.onclick = () => answerLecture(i, ex.answer, btn);
+        btn.textContent = ex.choices[origIndex];
+        btn.onclick = () => answerLecture(indices.indexOf(origIndex), shuffledCorrect, btn);
         choicesDiv.appendChild(btn);
     });
 }
