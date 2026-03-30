@@ -61,6 +61,32 @@
         </div>
     </div>
 
+    <!-- Modal de renommage d'enfant -->
+    <div id="rename-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Modifier le prénom</h2>
+            <input type="text" id="rename-child-input" placeholder="Nouveau prénom" maxlength="30" class="rename-input">
+            <div id="rename-error" class="auth-error hidden"></div>
+            <div class="rename-actions">
+                <button class="auth-btn" onclick="confirmRenameChild()">Enregistrer</button>
+                <button class="auth-skip" onclick="closeRenameModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de suppression d'enfant -->
+    <div id="delete-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Supprimer ce profil ?</h2>
+            <p id="delete-child-message"></p>
+            <p class="delete-warning">Toutes les étoiles, statistiques et trophées seront perdus.</p>
+            <div class="rename-actions">
+                <button class="auth-btn delete-confirm-btn" onclick="confirmDeleteChild()">Supprimer</button>
+                <button class="auth-skip" onclick="closeDeleteModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
+
     <div id="app" class="hidden">
         <header>
             <div class="header-top">

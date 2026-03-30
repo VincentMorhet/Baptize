@@ -189,10 +189,95 @@
     flex: 1;
 }
 
+.child-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.child-row .child-select-btn {
+    flex: 1;
+    min-width: 0;
+}
+
+.child-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.child-action-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.85rem;
+    opacity: 0.35;
+    transition: opacity 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.child-action-btn:hover {
+    opacity: 1;
+    background: #f0f0f0;
+}
+
+.child-action-delete:hover {
+    background: #f8d7da;
+}
+
 .no-children {
     color: #888;
     font-size: 0.95rem;
     padding: 16px 0;
+}
+
+/* Rename modal */
+.rename-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
+.rename-input:focus {
+    border-color: #667eea;
+}
+
+.rename-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.rename-actions .auth-btn {
+    margin-top: 0;
+}
+
+.rename-actions .auth-skip {
+    margin-top: 8px;
+}
+
+.delete-warning {
+    color: #dc3545;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.delete-confirm-btn {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
 }
 
 .add-child-form {

@@ -92,11 +92,34 @@ async function showChildSelector() {
 
     if (children && children.length > 0) {
         children.forEach(child => {
+            const row = document.createElement('div');
+            row.className = 'child-row';
+
             const btn = document.createElement('button');
             btn.className = 'child-select-btn';
             btn.innerHTML = `<span class="child-avatar">${child.name.charAt(0).toUpperCase()}</span><span class="child-btn-name">${child.name}</span>`;
             btn.onclick = () => selectChild(child);
-            list.appendChild(btn);
+
+            const actions = document.createElement('div');
+            actions.className = 'child-actions';
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'child-action-btn';
+            editBtn.textContent = '✏️';
+            editBtn.title = 'Renommer';
+            editBtn.onclick = (e) => { e.stopPropagation(); openRenameModal(child); };
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'child-action-btn child-action-delete';
+            delBtn.textContent = '🗑️';
+            delBtn.title = 'Supprimer';
+            delBtn.onclick = (e) => { e.stopPropagation(); openDeleteModal(child); };
+
+            actions.appendChild(editBtn);
+            actions.appendChild(delBtn);
+            row.appendChild(btn);
+            row.appendChild(actions);
+            list.appendChild(row);
         });
     } else {
         list.innerHTML = '<p class="no-children">Ajoute ton premier enfant pour commencer !</p>';
@@ -167,6 +190,88 @@ async function logoutUser() {
     currentUser = null;
     currentChild = null;
     location.reload();
+}
+
+// === GESTION DES COMPTES ENFANTS ===
+
+let childToEdit = null;
+
+function openRenameModal(child) {
+    childToEdit = child;
+    document.getElementById('rename-child-input').value = child.name;
+    document.getElementById('rename-error').classList.add('hidden');
+    document.getElementById('rename-modal').classList.remove('hidden');
+    document.getElementById('rename-child-input').focus();
+}
+
+function closeRenameModal() {
+    document.getElementById('rename-modal').classList.add('hidden');
+    childToEdit = null;
+}
+
+async function confirmRenameChild() {
+    const newName = document.getElementById('rename-child-input').value.trim();
+    const errorEl = document.getElementById('rename-error');
+    errorEl.classList.add('hidden');
+
+    if (!newName) {
+        errorEl.textContent = 'Le prénom ne peut pas être vide.';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('children')
+        .update({ name: newName })
+        .eq('id', childToEdit.id);
+
+    if (error) {
+        errorEl.textContent = 'Erreur lors du renommage. Réessaie.';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    if (currentChild && currentChild.id === childToEdit.id) {
+        currentChild.name = newName;
+        document.getElementById('child-name-display').textContent = newName;
+    }
+
+    closeRenameModal();
+    showChildSelector();
+}
+
+function openDeleteModal(child) {
+    childToEdit = child;
+    document.getElementById('delete-child-message').textContent =
+        `Veux-tu vraiment supprimer le profil de « ${child.name} » ?`;
+    document.getElementById('delete-modal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
+    childToEdit = null;
+}
+
+async function confirmDeleteChild() {
+    // Supprimer trophées, scores puis l'enfant
+    await supabaseClient.from('trophies').delete().eq('child_id', childToEdit.id);
+    await supabaseClient.from('scores').delete().eq('child_id', childToEdit.id);
+    const { error } = await supabaseClient.from('children').delete().eq('id', childToEdit.id);
+
+    if (error) {
+        closeDeleteModal();
+        const errorEl = document.getElementById('child-error');
+        errorEl.textContent = 'Erreur lors de la suppression. Réessaie.';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    if (currentChild && currentChild.id === childToEdit.id) {
+        currentChild = null;
+    }
+
+    closeDeleteModal();
+    showChildSelector();
 }
 
 // === SYNCHRONISATION CLOUD ===
