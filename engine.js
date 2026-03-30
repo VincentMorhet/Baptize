@@ -397,10 +397,8 @@ function generateMathExercise(config) {
         var larger = Math.max(a, b);
         var smaller = Math.min(a, b);
 
-        var promptHtml = colorizeNumber(a) + ' <span class="math-op">+</span> ' + colorizeNumber(b) + ' <span class="math-op">=</span> <span class="math-op">?</span>';
-
         return {
-            promptHtml: promptHtml,
+            promptHtml: colorizeNumber(a) + ' <span class="math-op">+</span> ' + colorizeNumber(b) + ' <span class="math-op">=</span> <span class="math-op">?</span>',
             choices: [],
             answer: -1,
             a: a, b: b, op: '+',
