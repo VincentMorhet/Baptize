@@ -2,7 +2,7 @@
 // Remplace ces valeurs par celles de ton projet Supabase
 // (Settings > API dans le dashboard Supabase)
 const SUPABASE_URL = 'https://tcozyqurpozcbefxcfcr.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_TYhiOqGceVuy2wDXnRvnkQ_olWhIk-j';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjb3p5cXVycG96Y2JlZnhjZmNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTc0NTAsImV4cCI6MjA5MDM3MzQ1MH0.N0Bkyl1vDmY12vtObmmP0KmGUu6beha1ErXRKNQ2xMU';
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
