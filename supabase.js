@@ -1,13 +1,11 @@
 // === CONFIGURATION SUPABASE ===
-// Remplace ces valeurs par celles de ton projet Supabase
-// (Settings > API dans le dashboard Supabase)
 const SUPABASE_URL = 'https://tcozyqurpozcbefxcfcr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjb3p5cXVycG96Y2JlZnhjZmNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3OTc0NTAsImV4cCI6MjA5MDM3MzQ1MH0.N0Bkyl1vDmY12vtObmmP0KmGUu6beha1ErXRKNQ2xMU';
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
-let currentProfile = null;
+let currentChild = null;
 
 // === AUTHENTIFICATION ===
 
@@ -41,26 +39,21 @@ function showAuthSuccess(msg) {
 
 async function registerUser() {
     hideAuthMessages();
-    const name = document.getElementById('register-name').value.trim();
     const email = document.getElementById('register-email').value.trim();
     const password = document.getElementById('register-password').value;
 
-    if (!name) return showAuthError("Entre le prénom de l'enfant.");
     if (!email) return showAuthError("Entre l'email du parent.");
     if (password.length < 6) return showAuthError('Le mot de passe doit faire au moins 6 caractères.');
 
-    const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: { data: { child_name: name } }
-    });
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
 
     if (error) return showAuthError(error.message);
 
     if (data.user && !data.session) {
         showAuthSuccess('Inscription réussie ! Vérifie les emails pour confirmer le compte.');
     } else if (data.session) {
-        await onAuthSuccess(data.user, name);
+        currentUser = data.user;
+        showChildSelector();
     }
 }
 
@@ -75,106 +68,138 @@ async function loginUser() {
 
     if (error) return showAuthError('Email ou mot de passe incorrect.');
 
-    const name = data.user.user_metadata?.child_name || 'Ami';
-    await onAuthSuccess(data.user, name);
+    currentUser = data.user;
+    showChildSelector();
 }
 
-async function onAuthSuccess(user, name) {
-    currentUser = user;
-    currentProfile = { name };
+// === GESTION DES ENFANTS ===
 
-    // Créer ou récupérer le profil
-    const { data: profile } = await supabaseClient
-        .from('profiles')
+async function showChildSelector() {
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('child-screen').classList.remove('hidden');
+    document.getElementById('child-error').classList.add('hidden');
+    document.getElementById('new-child-name').value = '';
+
+    const { data: children, error } = await supabaseClient
+        .from('children')
         .select('*')
-        .eq('id', user.id)
-        .single();
+        .eq('parent_id', currentUser.id)
+        .order('created_at', { ascending: true });
 
-    if (!profile) {
-        await supabaseClient.from('profiles').insert({
-            id: user.id,
-            name: name,
-            parent_email: user.email,
+    const list = document.getElementById('children-list');
+    list.innerHTML = '';
+
+    if (children && children.length > 0) {
+        children.forEach(child => {
+            const btn = document.createElement('button');
+            btn.className = 'child-select-btn';
+            btn.innerHTML = `<span class="child-avatar">${child.name.charAt(0).toUpperCase()}</span><span class="child-btn-name">${child.name}</span>`;
+            btn.onclick = () => selectChild(child);
+            list.appendChild(btn);
         });
     } else {
-        currentProfile = profile;
+        list.innerHTML = '<p class="no-children">Ajoute ton premier enfant pour commencer !</p>';
+    }
+}
+
+async function addChild() {
+    const nameInput = document.getElementById('new-child-name');
+    const name = nameInput.value.trim();
+    const errorEl = document.getElementById('child-error');
+    errorEl.classList.add('hidden');
+
+    if (!name) {
+        errorEl.textContent = "Entre le prénom de l'enfant.";
+        errorEl.classList.remove('hidden');
+        return;
     }
 
-    // Synchroniser les données cloud vers l'app
-    await syncFromCloud();
+    const { data, error } = await supabaseClient.from('children').insert({
+        parent_id: currentUser.id,
+        name: name,
+    }).select().single();
 
-    enterApp(currentProfile.name);
+    if (error) {
+        errorEl.textContent = "Erreur lors de l'ajout. Réessaie.";
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    nameInput.value = '';
+    showChildSelector();
+}
+
+async function selectChild(child) {
+    currentChild = child;
+    await syncFromCloud();
+    enterApp();
+}
+
+// === ENTRÉE DANS L'APP ===
+
+function enterApp() {
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('child-screen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+
+    // Afficher le nom de l'enfant dans le header
+    if (currentChild) {
+        const bar = document.getElementById('child-bar');
+        bar.classList.remove('hidden');
+        document.getElementById('child-name-display').textContent = currentChild.name;
+    }
+
+    loadState();
 }
 
 function skipAuth() {
     currentUser = null;
-    currentProfile = null;
-    enterApp(null);
-}
-
-function enterApp(childName) {
+    currentChild = null;
     document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('child-screen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
-
-    // Personnaliser le sous-titre
-    const subtitle = document.querySelector('.subtitle');
-    if (childName) {
-        subtitle.textContent = `Apprends en t'amusant, ${childName} !`;
-    }
-
-    // Ajouter la barre utilisateur si connecté
-    if (currentUser) {
-        const header = document.querySelector('header');
-        if (!document.querySelector('.user-bar')) {
-            const bar = document.createElement('div');
-            bar.className = 'user-bar';
-            bar.innerHTML = `<span>${currentProfile.name}</span> <button onclick="logoutUser()">Déconnexion</button>`;
-            header.appendChild(bar);
-        }
-    }
-
     loadState();
 }
 
 async function logoutUser() {
     await supabaseClient.auth.signOut();
     currentUser = null;
-    currentProfile = null;
+    currentChild = null;
     location.reload();
 }
 
 // === SYNCHRONISATION CLOUD ===
 
 async function syncToCloud() {
-    if (!currentUser) return;
+    if (!currentUser || !currentChild) return;
 
     await supabaseClient.from('scores').upsert({
-        user_id: currentUser.id,
+        child_id: currentChild.id,
         category: 'all',
         stars: state.stars,
         exercises_done: state.stats.lecture + state.stats.maths + state.stats.sons,
         perfect_series: state.stats.perfectSeries,
         stats: state.stats,
         updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id,category' });
+    }, { onConflict: 'child_id,category' });
 
-    // Sync trophées
     for (const trophyId of state.trophees) {
         await supabaseClient.from('trophies').upsert({
-            user_id: currentUser.id,
+            child_id: currentChild.id,
             trophy_id: trophyId,
             unlocked_at: new Date().toISOString(),
-        }, { onConflict: 'user_id,trophy_id' });
+        }, { onConflict: 'child_id,trophy_id' });
     }
 }
 
 async function syncFromCloud() {
-    if (!currentUser) return;
+    if (!currentUser || !currentChild) return;
 
     const { data: scoreData } = await supabaseClient
         .from('scores')
         .select('*')
-        .eq('user_id', currentUser.id)
+        .eq('child_id', currentChild.id)
         .eq('category', 'all')
         .single();
 
@@ -183,12 +208,17 @@ async function syncFromCloud() {
         if (scoreData.stats) {
             state.stats = scoreData.stats;
         }
+    } else {
+        // Nouveau profil enfant, reset state
+        state.stars = 0;
+        state.stats = { lecture: 0, maths: 0, sons: 0, perfectSeries: 0 };
+        state.trophees = [];
     }
 
     const { data: trophyData } = await supabaseClient
         .from('trophies')
         .select('trophy_id')
-        .eq('user_id', currentUser.id);
+        .eq('child_id', currentChild.id);
 
     if (trophyData) {
         state.trophees = trophyData.map(t => t.trophy_id);
@@ -201,17 +231,14 @@ async function syncFromCloud() {
 // === AUTO-LOGIN AU CHARGEMENT ===
 
 async function initAuth() {
-    // Vérifier si une session existe déjà
     const { data: { session } } = await supabaseClient.auth.getSession();
 
     if (session) {
-        const name = session.user.user_metadata?.child_name || 'Ami';
-        await onAuthSuccess(session.user, name);
+        currentUser = session.user;
+        showChildSelector();
     }
 }
 
-// Ne pas appeler loadState() au chargement global si auth est configuré
-// (il sera appelé dans enterApp)
 if (SUPABASE_URL !== 'https://VOTRE_PROJECT_ID.supabase.co') {
     initAuth();
 }

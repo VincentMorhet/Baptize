@@ -673,9 +673,4 @@ function updateProgress(section) {
 }
 
 // === INITIALISATION ===
-
-if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'https://VOTRE_PROJECT_ID.supabase.co') {
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-    loadState();
-}
+// L'auth est gérée par supabase.js (chargé avant engine.js)
