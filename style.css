@@ -1215,7 +1215,8 @@ body.in-game header h1 {
 }
 
 body.in-game .child-bar {
-    display: none;
+    margin-top: 2px;
+    gap: 6px;
 }
 
 body.in-game #stars-display {

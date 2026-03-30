@@ -237,17 +237,19 @@ function showLectureExercise() {
     const ex = state.currentExercises[state.currentIndex];
     const promptDiv = document.getElementById('lecture-prompt');
     const questionDiv = document.getElementById('lecture-question');
+    promptDiv.textContent = ex.prompt;
     if (state.lectureDifficulty === 'histoires') {
-        promptDiv.textContent = ex.prompt;
         promptDiv.classList.add('story-text');
-        questionDiv.textContent = ex.question;
         questionDiv.classList.add('story-question');
+    } else {
+        promptDiv.classList.remove('story-text');
+        questionDiv.classList.remove('story-question');
+    }
+    if (ex.question) {
+        questionDiv.textContent = ex.question;
         questionDiv.classList.remove('hidden');
     } else {
-        promptDiv.textContent = ex.prompt;
-        promptDiv.classList.remove('story-text');
         questionDiv.textContent = '';
-        questionDiv.classList.remove('story-question');
         questionDiv.classList.add('hidden');
     }
     document.getElementById('lecture-feedback').textContent = '';

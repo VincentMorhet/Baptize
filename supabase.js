@@ -339,7 +339,13 @@ function enterApp() {
         document.getElementById('child-name-display').textContent = currentChild.name;
     }
 
-    loadState();
+    // Si on vient d'un syncFromCloud, state est déjà à jour
+    // loadState sert uniquement en mode anonyme (pas de cloud)
+    if (!currentUser || !currentChild) {
+        loadState();
+    } else {
+        updateStarsDisplay();
+    }
 }
 
 function skipAuth() {
