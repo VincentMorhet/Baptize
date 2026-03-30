@@ -241,11 +241,13 @@ function showLectureExercise() {
         promptDiv.textContent = ex.prompt;
         promptDiv.classList.add('story-text');
         questionDiv.textContent = ex.question;
+        questionDiv.classList.add('story-question');
         questionDiv.classList.remove('hidden');
     } else {
         promptDiv.textContent = ex.prompt;
         promptDiv.classList.remove('story-text');
         questionDiv.textContent = '';
+        questionDiv.classList.remove('story-question');
         questionDiv.classList.add('hidden');
     }
     document.getElementById('lecture-feedback').textContent = '';

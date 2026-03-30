@@ -670,6 +670,14 @@ header h1 {
     padding: 20px 24px;
 }
 
+.story-question {
+    font-size: 1.15rem;
+    font-weight: bold;
+    font-style: normal;
+    color: #333;
+    margin-bottom: 16px;
+}
+
 /* === BOUTON HAUT-PARLEUR === */
 .speak-btn {
     display: inline-flex;
@@ -1282,6 +1290,14 @@ body.in-game .big-text.story-text {
     text-align: left;
     line-height: 1.6;
     min-height: auto;
+}
+
+body.in-game .story-question {
+    font-size: 1.05rem;
+    font-weight: bold;
+    font-style: normal;
+    color: #333;
+    margin-bottom: 10px;
 }
 
 body.in-game .choices-grid {
