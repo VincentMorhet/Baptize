@@ -1,4 +1,4 @@
-// === SONS ===
+// === SONS (logique partagée) ===
 
 function setSonsDifficulty(diff) {
     state.sonsDifficulty = diff;
@@ -33,14 +33,10 @@ function showSonsExercise() {
     }
 
     const ex = state.currentExercises[state.currentIndex];
+    const typeConfig = SONS_TYPES[state.sonsDifficulty] || {};
 
-    const sonsInstructionTexts = {
-        'sons-simples': '\u00c9coute le son puis choisis le mot qui le contient.',
-        'graphemes': 'Lis le groupe de lettres puis choisis le mot qui le contient.',
-        'confusions': 'Regarde bien les lettres puis choisis la bonne r\u00e9ponse.'
-    };
     document.getElementById('sons-exercise-instruction').textContent =
-        sonsInstructionTexts[state.sonsDifficulty] || '';
+        typeConfig.instruction || '';
 
     const promptDiv = document.getElementById('sons-prompt');
     if (ex.speak) {

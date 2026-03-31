@@ -1,3 +1,9 @@
+// === REGISTRES DES TYPES D'EXERCICES ===
+
+const LECTURE_TYPES = {};
+const MATHS_TYPES = {};
+const SONS_TYPES = {};
+
 // === ÉTAT DU JEU ===
 
 let state = {
