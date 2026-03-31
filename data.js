@@ -90,7 +90,7 @@ const LECTURE_DATA = {
 };
 
 const MATHS_DATA = {
-    doigts: { min: 1, max: 5, operations: ['+'], showHands: true },
+    compter: { min: 1, max: 5, operations: ['+'], showHands: true },
     decomposition: { min: 1, max: 9, operations: ['+'], decompose: true },
     facile: { min: 1, max: 10, operations: ['+'] },
     moyen: { min: 1, max: 20, operations: ['+', '-'] },

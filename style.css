@@ -623,6 +623,12 @@ header h1 {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
+.counting-item {
+    font-size: 2rem;
+    display: inline-block;
+    line-height: 1;
+}
+
 .hands-label {
     font-size: 1rem;
     font-weight: bold;
@@ -1584,6 +1590,10 @@ body.in-game .hands-display {
 body.in-game .finger-dot {
     width: 22px;
     height: 22px;
+}
+
+body.in-game .counting-item {
+    font-size: 1.6rem;
 }
 
 body.in-game .hands-plus {
