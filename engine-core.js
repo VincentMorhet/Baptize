@@ -203,7 +203,7 @@ function selectSmartExercises(allExercises, section, difficulty, count) {
 // === FIN DE SÉRIE ===
 
 function endSeries(type) {
-    const total = 5;
+    const total = state.currentExercises.length;
     const correct = state.correctCount;
     const isPerfect = correct === total;
 
@@ -226,7 +226,7 @@ function endSeries(type) {
         animation.textContent = '\uD83C\uDF89';
         title.textContent = 'Parfait ! \uD83C\uDFC6';
         message.textContent = `${correct}/${total} \u2014 Incroyable, aucune erreur ! +3 \u00e9toiles bonus !`;
-    } else if (correct >= 3) {
+    } else if (correct >= total * 0.6) {
         animation.textContent = '\uD83D\uDC4F';
         title.textContent = 'Bravo ! \uD83D\uDE0A';
         message.textContent = `${correct}/${total} \u2014 C'est tr\u00e8s bien, continue comme \u00e7a !`;

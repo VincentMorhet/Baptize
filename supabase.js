@@ -120,6 +120,7 @@ async function showChildSelector() {
 async function selectChild(child) {
     currentChild = child;
     await loadExerciseData();
+    loadState(); // Charger le dailyHistory local avant la sync cloud
     await syncFromCloud();
     enterApp();
 }
@@ -408,6 +409,9 @@ async function syncToCloud() {
 async function syncFromCloud() {
     if (!currentUser || !currentChild) return;
 
+    // Préserver le dailyHistory local (non stocké dans le cloud)
+    var savedDailyHistory = state.dailyHistory || [];
+
     const { data: scoreData } = await supabaseClient
         .from('scores')
         .select('*')
@@ -460,6 +464,9 @@ async function syncFromCloud() {
     } else {
         state.exerciseHistory = {};
     }
+
+    // Restaurer le dailyHistory local
+    state.dailyHistory = savedDailyHistory;
 
     saveState();
     updateStarsDisplay();
